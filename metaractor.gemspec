@@ -6,6 +6,7 @@ require 'metaractor/version'
 Gem::Specification.new do |spec|
   spec.name          = 'metaractor'
   spec.version       = Metaractor::VERSION
+  spec.license       = 'Apache-2.0'
   spec.authors       = ['Ryan Schlesinger']
   spec.email         = ['ryan@outstand.com']
 
