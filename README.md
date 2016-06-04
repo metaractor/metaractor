@@ -40,6 +40,8 @@ class HighFiveUser
 end
 ```
 
+See Interactor's [README](https://github.com/collectiveidea/interactor/blob/master/README.md) for more information.
+
 ## Development
 
 - `docker build -t outstand/metaractor .`
