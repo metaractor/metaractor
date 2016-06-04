@@ -50,7 +50,7 @@ See Interactor's [README](https://github.com/collectiveidea/interactor/blob/mast
 To release a new version:
 - Update the version number in `version.rb` and commit the result.
 - `docker build -t outstand/metaractor .`
-- `docker run -it --rm -v ~/.gitconfig:/root/.gitconfig -v ~/.gitconfig.user:/root/.gitconfig.user -v ~/.ssh/id_rsa:/root/.ssh/id_rsa -v ~/.gem:/root/.gem outstand/metaractor rake release`
+- `docker run -it --rm -v ~/.gitconfig:/home/metaractor/.gitconfig -v ~/.gitconfig.user:/home/metaractor/.gitconfig.user -v ~/.ssh/id_rsa:/home/metaractor/.ssh/id_rsa -v ~/.gem:/home/metaractor/.gem outstand/metaractor rake release`
 
 ## Contributing
 
