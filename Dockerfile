@@ -37,6 +37,7 @@ RUN cd /metaractor \
     && bundle install \
     && git config --global push.default simple
 COPY . /metaractor/
+RUN chown -R metaractor:metaractor /metaractor
 
 WORKDIR /metaractor
 
