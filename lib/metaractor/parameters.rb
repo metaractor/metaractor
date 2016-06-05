@@ -99,8 +99,6 @@ module Metaractor
 
         case operator
         when :or
-          # We can't test for #one? here as that breaks interactors with the same setup sharing a context.
-          # This happens in almost all of our organizers.
           return valids.any?, "(#{messages.join(' or ')})"
         when :xor
           return valids.one?, "(#{messages.join(' xor ')})"
