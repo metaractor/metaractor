@@ -42,6 +42,7 @@ end
 
 See Interactor's [README](https://github.com/collectiveidea/interactor/blob/master/README.md) for more information.
 
+### Configuration
 Metaractor is meant to be extensible (hence the 'meta').  You can add additional modules in the following way:
 
 ```ruby
@@ -52,6 +53,43 @@ Metaractor.configure do |config|
   config.include_module Metaractor::SidekiqBatch
 end
 ```
+
+### Required Parameters
+Metaractor supports complex required parameter statements and you can chain these together in any manner using `and`, `or`, and `xor`.
+```ruby
+required and: [:token, or: [:recipient_id, :recipient] ]
+```
+
+### Optional Parameters
+As optional parameters have no enforcement, they are merely advisory.
+```ruby
+optional :enable_logging
+```
+
+### Custom Validation
+Metaractor supports doing custom validation before any user supplied before_hooks run.
+```ruby
+validate_parameters do
+  if context.foo == :bar
+    require_parameter :bar, message: 'optional missing parameter message'
+  end
+
+  unless context.user.admin?
+    add_parameter_error param: :user, message: 'User must be an admin'
+  end
+end
+```
+
+If you need to require a parameter from a `before_hook` for any reason, use the bang version of the method:
+```ruby
+before do
+  # Be careful with this approach as some user code may run before the parameter validation
+  require_parameter! :awesome if context.mode == :awesome
+end
+```
+
+### Further Reading
+For more examples of all of the above approaches, please see the specs.
 
 ## Development
 
