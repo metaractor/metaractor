@@ -38,6 +38,14 @@ class HighFiveUser
   # private
   # delegate :user, to: context
 end
+
+result = HighFiveUser.call # not passing user or user_id
+result.failure?
+# => true
+result.valid?
+# => false
+result.errors
+# => ["Required parameters: (user_id or user)"]
 ```
 
 See Interactor's [README](https://github.com/collectiveidea/interactor/blob/master/README.md) for more information.
