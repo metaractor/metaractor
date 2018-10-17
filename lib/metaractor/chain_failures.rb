@@ -3,8 +3,7 @@ module Metaractor
     def call
       super
     rescue Interactor::Failure => e
-      context.invalidate! if e.context.invalid?
-      context.fail_with_errors!(messsages: e.context.errors)
+      context.fail_from_context(context: e.context)
       raise
     end
   end

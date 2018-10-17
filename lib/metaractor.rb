@@ -5,6 +5,7 @@ require 'metaractor/parameters'
 require 'metaractor/run_with_context'
 require 'metaractor/context_validity'
 require 'metaractor/chain_failures'
+require 'metaractor/fail_from_context'
 
 module Metaractor
   def self.included(base)
