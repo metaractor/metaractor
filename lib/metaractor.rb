@@ -4,6 +4,7 @@ require 'metaractor/errors'
 require 'metaractor/parameters'
 require 'metaractor/run_with_context'
 require 'metaractor/context_validity'
+require 'metaractor/chain_failures'
 
 module Metaractor
   def self.included(base)
@@ -36,7 +37,8 @@ module Metaractor
     [
       { module: Metaractor::Errors, method: :include },
       { module: Metaractor::Parameters, method: :include },
-      { module: Metaractor::RunWithContext, method: :include }
+      { module: Metaractor::RunWithContext, method: :include },
+      { module: Metaractor::ChainFailures, method: :prepend }
     ]
   end
 
