@@ -1,6 +1,7 @@
 require 'metaractor/version'
 require 'interactor'
 require 'metaractor/errors'
+require 'metaractor/context_errors'
 require 'metaractor/parameters'
 require 'metaractor/run_with_context'
 require 'metaractor/context_validity'
@@ -39,7 +40,7 @@ module Metaractor
       { module: Metaractor::Errors, method: :include },
       { module: Metaractor::Parameters, method: :include },
       { module: Metaractor::RunWithContext, method: :include },
-      { module: Metaractor::ChainFailures, method: :prepend }
+      { module: Metaractor::ChainFailures, method: :include }
     ]
   end
 

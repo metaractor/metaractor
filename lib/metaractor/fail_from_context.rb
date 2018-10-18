@@ -1,8 +1,10 @@
 module Metaractor
   module FailFromContext
     def fail_from_context(context:)
+      return if context.equal?(self)
+
       invalidate! if context.invalid?
-      add_errors(messsages: context.errors)
+      add_errors(messages: context.errors)
       @failure = true
     end
   end
