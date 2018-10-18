@@ -101,13 +101,13 @@ For more examples of all of the above approaches, please see the specs.
 
 ## Development
 
-- `docker build -t outstand/metaractor .`
-- `docker run -it --rm -v $(pwd):/metaractor outstand/metaractor` to run specs
+- `docker-compose build --pull`
+- `docker-compose run --rm metaractor` to run specs
 
 To release a new version:
 - Update the version number in `version.rb` and commit the result.
-- `docker build -t outstand/metaractor .`
-- `docker run -it --rm -v ~/.gitconfig:/home/metaractor/.gitconfig -v ~/.gitconfig.user:/home/metaractor/.gitconfig.user -v ~/.ssh/id_rsa:/home/metaractor/.ssh/id_rsa -v ~/.gem:/home/metaractor/.gem outstand/metaractor rake release`
+- `docker-compose build --pull`
+- `docker-compose run --rm release`
 
 ## Contributing
 
