@@ -10,9 +10,9 @@ if [ "$(which "$1")" = '' ]; then
 fi
 
 if [ "$1" = 'bundle' ]; then
-  set -- su-exec deploy "$@"
+  set -- su-exec metaractor "$@"
 elif ls /usr/local/bundle/bin | grep -q "\b$1\b"; then
-  set -- su-exec deploy bundle exec "$@"
+  set -- su-exec metaractor bundle exec "$@"
 
   su-exec metaractor ash -c 'bundle check || bundle install'
 fi
