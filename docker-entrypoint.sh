@@ -1,12 +1,20 @@
-#!/bin/dumb-init /bin/sh
+#!/bin/sh
 set -e
 
-if [ "$1" = 'rspec' ] || [ "$1" = 'rake' ]; then
-  set -- bundle exec "$@"
+if [ "$(which "$1")" = '' ]; then
+  if [ "$(ls -A /usr/local/bundle/bin)" = '' ]; then
+    echo 'command not in path and bundler not initialized'
+    echo 'running bundle install'
+    su-exec metaractor bundle install
+  fi
 fi
 
 if [ "$1" = 'bundle' ]; then
-  set -- gosu metaractor "$@"
+  set -- su-exec deploy "$@"
+elif ls /usr/local/bundle/bin | grep -q "\b$1\b"; then
+  set -- su-exec deploy bundle exec "$@"
+
+  su-exec metaractor ash -c 'bundle check || bundle install'
 fi
 
 exec "$@"
