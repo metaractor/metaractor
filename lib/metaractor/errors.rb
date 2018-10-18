@@ -5,16 +5,24 @@ module Metaractor
   class InvalidError < Error; end
 
   module Errors
-    def self.included(base)
-      base.class_eval do
-        extend Forwardable
-        def_delegators :context,
-          :fail_with_error!,
-          :fail_with_errors!,
-          :add_error,
-          :add_errors,
-          :error_messages
-      end
+    def fail_with_error!(*args)
+      context.fail_with_error!(*args)
+    end
+
+    def fail_with_errors!(*args)
+      context.fail_with_errors!(*args)
+    end
+
+    def add_error(*args)
+      context.add_error(*args)
+    end
+
+    def add_errors(*args)
+      context.add_errors(*args)
+    end
+
+    def error_messages
+      context.error_messages
     end
   end
 end
