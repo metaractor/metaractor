@@ -1,39 +1,28 @@
+require 'forwardable'
+
 module Metaractor
   class Error < StandardError; end
   class InvalidError < Error; end
 
   module Errors
-    def self.included(base)
-      base.class_eval do
-        before :initialize_errors_array
-      end
+    def fail_with_error!(*args)
+      context.fail_with_error!(*args)
     end
 
-    def initialize_errors_array
-      context.errors ||= []
+    def fail_with_errors!(*args)
+      context.fail_with_errors!(*args)
     end
 
-    def fail_with_error!(message:)
-      add_error(message: message)
-      context.fail!
+    def add_error(*args)
+      context.add_error(*args)
     end
 
-    def fail_with_errors!(messages:)
-      add_errors(messages: messages)
-      context.fail!
-    end
-
-    def add_error(message:)
-      add_errors(messages: Array(message))
-    end
-
-    def add_errors(messages:)
-      context.errors ||= []
-      context.errors += messages
+    def add_errors(*args)
+      context.add_errors(*args)
     end
 
     def error_messages
-      context.errors.join("\n")
+      context.error_messages
     end
   end
 end

@@ -227,5 +227,78 @@ describe Metaractor do
         expect(result.errors).to include 'Required parameters: (token xor all)'
       end
     end
+
+    context 'nested failures' do
+      let(:child) do
+        Class.new do
+          include Metaractor
+
+          required :a_param
+
+          def call
+            fail_with_error!(message: 'BOOM')
+          end
+        end
+      end
+
+      let(:parent) do
+        Class.new do
+          include Metaractor
+
+          required :child
+          optional :a_param
+
+          def call
+            context.child.call!(a_param: context.a_param)
+          end
+        end
+      end
+
+      let(:simple) do
+        Class.new do
+          include Metaractor
+        end
+      end
+
+      let(:organizer) do
+        Class.new do
+          include Metaractor
+          include Interactor::Organizer
+        end
+      end
+
+      it 'fails the parent context' do
+        result = parent.call(child: child, a_param: :foo)
+        expect(result).to be_failure
+        expect(result.errors).to include 'BOOM'
+      end
+
+      it 'invalidates the parent context' do
+        result = parent.call(child: child)
+        expect(result).to be_failure
+        expect(result).to be_invalid
+        expect(result.errors).to include 'Required parameters: a_param'
+      end
+
+      it 'allows organizers to run normally' do
+        organizer.organize(simple)
+        result = organizer.call(a_param: :foo)
+        expect(result).to be_success
+      end
+
+      it 'allows organizers to fail normally' do
+        organizer.organize(child)
+        result = organizer.call(a_param: :foo)
+        expect(result).to be_failure
+        expect(result.errors).to eq ['BOOM']
+      end
+
+      it 'allows organizers to invalidate normally' do
+        organizer.organize(child)
+        result = organizer.call
+        expect(result).to be_failure
+        expect(result.errors).to include 'Required parameters: a_param'
+      end
+    end
   end
 end
