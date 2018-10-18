@@ -292,6 +292,13 @@ describe Metaractor do
         expect(result).to be_failure
         expect(result.errors).to eq ['BOOM']
       end
+
+      it 'allows organizers to invalidate normally' do
+        organizer.organize(child)
+        result = organizer.call
+        expect(result).to be_failure
+        expect(result.errors).to include 'Required parameters: a_param'
+      end
     end
   end
 end
