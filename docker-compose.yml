@@ -8,5 +8,17 @@ services:
     volumes:
       - bundler-data:/usr/local/bundle
       - .:/metaractor
+  release:
+    image: outstand/metaractor:dev
+    stdin_open: true
+    tty: true
+    command: rake release
+    volumes:
+      - bundler-data:/usr/local/bundle
+      - ~/.gitconfig:/home/metaractor/.gitconfig
+      - ~/.gitconfig.user:/home/metaractor/.gitconfig.user
+      - ~/.ssh/id_rsa:/home/metaractor/.ssh/id_rsa
+      - ~/.gem:/home/metaractor/.gem
+
 volumes:
   bundler-data:
