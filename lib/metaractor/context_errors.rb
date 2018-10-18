@@ -1,13 +1,11 @@
 module Metaractor
   module ContextErrors
-    def self.included(base)
-      base.class_eval do
-        attr_writer :errors
-      end
-    end
-
     def errors
-      @errors ||= []
+      if super.nil?
+        self.errors = []
+      end
+
+      super
     end
 
     def fail_with_error!(message:)
