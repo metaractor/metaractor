@@ -19,10 +19,10 @@ module Metaractor
     end
 
     def add_error(message: nil, **args)
-      if message.present?
-        add_errors(messages: Array(message))
-      else
+      if message.nil?
         add_errors(errors: [**args])
+      else
+        add_errors(messages: Array(message))
       end
     end
 
@@ -34,7 +34,11 @@ module Metaractor
     def error_messages
       errors.map do |error|
         if error.respond_to?(:has_key?) && error.has_key?(:title)
-          error[:title].to_s
+          if error[:source] != nil
+            "#{error[:source]}: #{error[:title]}"
+          else
+            error[:title].to_s
+          end
         else
           error.to_s
         end

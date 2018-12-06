@@ -228,6 +228,37 @@ describe Metaractor do
       end
     end
 
+    context 'structured errors' do
+      let(:error_test_class) do
+        Class.new do
+          include Metaractor
+
+          optional :user
+
+          def call
+            fail_with_error!(
+              source: '/user',
+              title: 'Bad user'
+            )
+          end
+        end
+      end
+
+      it 'fails with a structured error' do
+        result = error_test_class.call
+        expect(result).to be_failure
+
+        expect(result.errors).to include({
+          source: '/user',
+          title: 'Bad user'
+        })
+
+        expect(result.error_messages).to include(
+          '/user: Bad user'
+        )
+      end
+    end
+
     context 'nested failures' do
       let(:child) do
         Class.new do
