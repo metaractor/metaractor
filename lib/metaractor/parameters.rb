@@ -8,6 +8,7 @@ module Metaractor
         class << self
           attr_writer :_required_parameters
           attr_writer :_optional_parameters
+          attr_writer :_allow_blank
         end
 
         before :remove_blank_values
@@ -33,6 +34,14 @@ module Metaractor
         self._optional_parameters += params
       end
 
+      def _allow_blank
+        @_allow_blank ||= []
+      end
+
+      def allow_blank(*params)
+        self._allow_blank += params
+      end
+
       def validate_parameters(*hooks, &block)
         hooks << block if block
         hooks.each {|hook| validate_hooks.push(hook) }
@@ -46,6 +55,8 @@ module Metaractor
     def remove_blank_values
       to_delete = []
       context.each_pair do |k,v|
+        next if self.class._allow_blank.include?(k)
+
         # The following regex is borrowed from Rails' String#blank?
         to_delete << k if (v.is_a?(String) && /\A[[:space:]]*\z/ === v) || v.nil?
       end

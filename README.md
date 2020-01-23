@@ -74,6 +74,14 @@ As optional parameters have no enforcement, they are merely advisory.
 optional :enable_logging
 ```
 
+### Skipping Blank Parameter Removal
+By default Metaractor removes blank values that are passed in. You may skip this behavior on a per-parameter basis:
+```ruby
+allow_blank :name
+```
+
+You may check to see if a parameter exists via `context.has_key?`.
+
 ### Custom Validation
 Metaractor supports doing custom validation before any user supplied before_hooks run.
 ```ruby

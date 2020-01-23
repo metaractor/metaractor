@@ -1,4 +1,4 @@
-FROM ruby:2.5.1-alpine
+FROM ruby:2.6.5-alpine
 MAINTAINER Ryan Schlesinger <ryan@outstand.com>
 
 RUN addgroup -g 1000 -S metaractor && \

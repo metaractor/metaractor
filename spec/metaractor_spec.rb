@@ -74,6 +74,8 @@ describe Metaractor do
         Class.new do
           include Metaractor
 
+          allow_blank :special
+
           def call
             context.keys = context.to_h.keys
           end
@@ -108,6 +110,12 @@ describe Metaractor do
       it 'does not remove {}' do
         result = blank_class.call(foo: {})
         expect(result.keys).to include :foo
+      end
+
+      it 'does not remove whitelisted param' do
+        result = blank_class.call(foo: '', special: nil)
+        expect(result.keys).to_not include :foo
+        expect(result.keys).to include :special
       end
     end
 
@@ -329,6 +337,21 @@ describe Metaractor do
         result = organizer.call
         expect(result).to be_failure
         expect(result.errors).to include 'Required parameters: a_param'
+      end
+    end
+
+    describe 'Context#has_key?' do
+      let(:result) do
+        Interactor::Context.new(foo: 'bar', blank: '', nope: nil)
+      end
+
+      it 'correctly identifies existing keys' do
+        expect(result.has_key?(:foo)).to be_truthy
+        expect(result.has_key?('foo')).to be_truthy
+        expect(result.has_key?(:blank)).to be_truthy
+        expect(result.has_key?(:nope)).to be_truthy
+
+        expect(result.has_key?(:bar)).to be_falsy
       end
     end
   end
