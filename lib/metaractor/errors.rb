@@ -13,7 +13,13 @@ module Metaractor
     def add(error: {}, errors: {})
       trees = []
       [error, errors].each do |h| 
-        tree = Sycamore::Tree.from(h)
+        tree = nil
+        if h.is_a? Metaractor::Errors
+          tree = Sycamore::Tree.from(h.instance_variable_get(:@tree))
+        else
+          tree = Sycamore::Tree.from(h)
+        end
+
         unless tree.empty?
           if tree.nodes.any? {|node| tree.strict_leaf?(node) }
             raise ArgumentError, "Invalid hash!"
