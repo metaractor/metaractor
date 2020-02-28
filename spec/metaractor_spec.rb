@@ -51,21 +51,21 @@ describe Metaractor do
         result = param_test_class.call(foo: :bar)
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'bar required when foo is bar'
+        expect(result.error_messages).to include 'bar required when foo is bar'
       end
 
       it 'marks the interactor as failed and invalid with add_parameter_error' do
         result = param_test_class.call(foo: :deadbeef)
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'foo is invalid'
+        expect(result.error_messages).to include 'foo is invalid'
       end
 
       it 'marks the interactor as failed and invalid with require_parameter!' do
         result = param_test_class.call(foo: :awesome)
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'Required parameters: awesome'
+        expect(result.error_messages).to include 'Required parameters: awesome'
       end
     end
 
@@ -161,7 +161,7 @@ describe Metaractor do
         result = param_test_class.call
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'Required parameters: (token or (recipient_id or recipient))'
+        expect(result.error_messages).to include 'Required parameters: (token or (recipient_id or recipient))'
       end
     end
 
@@ -197,7 +197,7 @@ describe Metaractor do
         result = param_test_class.call
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'Required parameters: (token or (recipient_id and recipient))'
+        expect(result.error_messages).to include 'Required parameters: (token or (recipient_id and recipient))'
       end
     end
 
@@ -232,7 +232,7 @@ describe Metaractor do
         result = param_test_class.call
         expect(result).to be_failure
         expect(result).to_not be_valid
-        expect(result.errors).to include 'Required parameters: (token xor all)'
+        expect(result.error_messages).to include 'Required parameters: (token xor all)'
       end
     end
 
@@ -241,12 +241,16 @@ describe Metaractor do
         Class.new do
           include Metaractor
 
+          optional :is_admin
           optional :user
 
           def call
             fail_with_error!(
-              source: '/user',
-              title: 'Bad user'
+              errors: {
+                base: 'Invalid configuration',
+                is_admin: 'must be true or false',
+                user: [ title: 'cannot be blank', username: ['must be unique', 'must not be blank'] ]
+              }
             )
           end
         end
@@ -256,13 +260,27 @@ describe Metaractor do
         result = error_test_class.call
         expect(result).to be_failure
 
-        expect(result.errors).to include({
-          source: '/user',
-          title: 'Bad user'
+        expect(result.errors.to_h).to include({
+          base: 'Invalid configuration',
+          is_admin: 'must be true or false',
+          user: {
+            title: 'cannot be blank',
+            username: ['must be unique', 'must not be blank']
+          }
         })
 
         expect(result.error_messages).to include(
-          '/user: Bad user'
+          'Invalid configuration',
+          'is_admin must be true or false',
+          'user.title cannot be blank',
+          'user.username must be unique',
+          'user.username must not be blank'
+        )
+
+        expect(result.errors.full_messages_for(:user)).to include(
+          'title cannot be blank',
+          'username must be unique',
+          'username must not be blank'
         )
       end
     end
@@ -309,14 +327,14 @@ describe Metaractor do
       it 'fails the parent context' do
         result = parent.call(child: child, a_param: :foo)
         expect(result).to be_failure
-        expect(result.errors).to include 'BOOM'
+        expect(result.error_messages).to include 'BOOM'
       end
 
       it 'invalidates the parent context' do
         result = parent.call(child: child)
         expect(result).to be_failure
         expect(result).to be_invalid
-        expect(result.errors).to include 'Required parameters: a_param'
+        expect(result.error_messages).to include 'Required parameters: a_param'
       end
 
       it 'allows organizers to run normally' do
@@ -329,14 +347,14 @@ describe Metaractor do
         organizer.organize(child)
         result = organizer.call(a_param: :foo)
         expect(result).to be_failure
-        expect(result.errors).to eq ['BOOM']
+        expect(result.error_messages).to eq ['BOOM']
       end
 
       it 'allows organizers to invalidate normally' do
         organizer.organize(child)
         result = organizer.call
         expect(result).to be_failure
-        expect(result.errors).to include 'Required parameters: a_param'
+        expect(result.error_messages).to include 'Required parameters: a_param'
       end
     end
 

@@ -2,47 +2,40 @@ module Metaractor
   module ContextErrors
     def errors
       if super.nil?
-        self.errors = []
+        self.errors = Metaractor::Errors.new
       end
 
       super
     end
 
-    def fail_with_error!(message: nil, **args)
-      add_error(message: message, **args)
+    def fail_with_error!(message: nil, errors: nil)
+      add_error(message: message, errors: errors)
       fail!
     end
 
-    def fail_with_errors!(messages: [], errors: [])
+    def fail_with_errors!(messages: [], errors: {})
       add_errors(messages: messages, errors: errors)
       fail!
     end
 
-    def add_error(message: nil, **args)
+    def add_error(message: nil, errors: nil)
       if message.nil?
-        add_errors(errors: [**args])
+        add_errors(errors: errors)
       else
         add_errors(messages: Array(message))
       end
     end
 
-    def add_errors(messages: [], errors: [])
-      self.errors += messages
-      self.errors += errors
+    def add_errors(messages: [], errors: {})
+      if !messages.empty?
+        self.errors.add(errors: { base: messages })
+      else
+        self.errors.add(errors: errors)
+      end
     end
 
     def error_messages
-      errors.map do |error|
-        if error.respond_to?(:has_key?) && error.has_key?(:title)
-          if error[:source] != nil
-            "#{error[:source]}: #{error[:title]}"
-          else
-            error[:title].to_s
-          end
-        else
-          error.to_s
-        end
-      end.join("\n")
+      errors.full_messages
     end
   end
 end

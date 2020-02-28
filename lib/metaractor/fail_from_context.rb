@@ -4,7 +4,7 @@ module Metaractor
       return if context.equal?(self)
 
       invalidate! if context.invalid?
-      add_errors(messages: context.errors)
+      add_errors(errors: context.errors.to_h)
       @failure = true
     end
   end

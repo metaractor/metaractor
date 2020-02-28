@@ -1,28 +1,56 @@
+require 'sycamore'
 require 'forwardable'
-
 module Metaractor
-  class Error < StandardError; end
-  class InvalidError < Error; end
+  class Errors
+    extend Forwardable
 
-  module Errors
-    def fail_with_error!(*args)
-      context.fail_with_error!(*args)
+    def initialize
+      @tree = Sycamore::Tree.new
     end
 
-    def fail_with_errors!(*args)
-      context.fail_with_errors!(*args)
+    def_delegators :@tree, :to_h, :empty?
+
+    def add(error: {}, errors: {})
+      trees = []
+      [error, errors].each do |h| 
+        tree = Sycamore::Tree.from(h)
+        unless tree.empty?
+          if tree.nodes.any? {|node| tree.strict_leaf?(node) }
+            raise ArgumentError, "Invalid hash!"
+          end
+          trees << tree
+        end
+      end
+
+      trees.each do |tree|
+        @tree.add(tree)
+      end
     end
 
-    def add_error(*args)
-      context.add_error(*args)
+    def full_messages(tree = @tree)
+      messages = []
+      tree.each_path do |path|
+        messages << message_from_path(path)
+      end
+
+      messages
     end
 
-    def add_errors(*args)
-      context.add_errors(*args)
+    def full_messages_for(*path)
+      full_messages(@tree.fetch_path(path))
     end
 
-    def error_messages
-      context.error_messages
+    private
+
+    def message_from_path(path)
+      path_elements = []
+      path.parent&.each_node do |node|
+        unless node == :base
+          path_elements << node.to_s
+        end
+      end
+
+      "#{path_elements.join('.')} #{path.node.to_s}".lstrip
     end
   end
 end
