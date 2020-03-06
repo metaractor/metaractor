@@ -317,7 +317,6 @@ describe Metaractor do
 
         expect(result.errors[:user, :username]).to include 'must be unique'
         expect(result.errors.dig(:user, :username)).to include 'must be unique'
-
       end
     end
 
