@@ -4,7 +4,7 @@ require 'forwardable'
 module Metaractor
   module Spec
     module Helpers
-      def context_creator(error_message: nil, error_messages: [], errors: [], valid: nil, invalid: nil, **attributes)
+      def context_creator(error_message: nil, error_messages: [], errors: [], valid: nil, invalid: nil, success: nil, failure: nil, **attributes)
         if error_message.present?
           error_messages << error_message
         end
@@ -17,7 +17,7 @@ module Metaractor
           result.invalidate!
         end
 
-        unless result.errors.empty?
+        if !result.errors.empty? || (success != nil && !success) || (failure != nil && failure)
           result.fail! rescue Interactor::Failure
         end
 
