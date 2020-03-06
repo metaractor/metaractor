@@ -42,6 +42,7 @@ module Metaractor
 
       messages
     end
+    alias to_a full_messages
 
     def full_messages_for(*path)
       child_tree = @tree.fetch_path(path)
