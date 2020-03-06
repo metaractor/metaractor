@@ -8,7 +8,7 @@ module Metaractor
       @tree = Sycamore::Tree.new
     end
 
-    def_delegators :@tree, :to_h, :empty?
+    def_delegators :@tree, :to_h, :empty?, :include?
 
     def add(error: {}, errors: {})
       trees = []
@@ -31,6 +31,7 @@ module Metaractor
       trees.each do |tree|
         @tree.add(tree)
       end
+      @tree.compact
     end
 
     def full_messages(tree = @tree)
@@ -43,8 +44,25 @@ module Metaractor
     end
 
     def full_messages_for(*path)
-      full_messages(@tree.fetch_path(path))
+      child_tree = @tree.fetch_path(path)
+
+      if child_tree.strict_leaves?
+        child_tree = @tree.fetch_path(path[0..-2])
+      end
+
+      full_messages(child_tree)
     end
+
+    def dig(*path)
+      result = @tree.dig(*path)
+
+      if result.strict_leaves?
+        result.nodes
+      else
+        result.to_h
+      end
+    end
+    alias [] dig
 
     private
 

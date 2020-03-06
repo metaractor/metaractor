@@ -260,7 +260,7 @@ describe Metaractor do
         result = error_test_class.call
         expect(result).to be_failure
 
-        expect(result.errors.to_h).to include({
+        expect(result.errors).to include({
           base: 'Invalid configuration',
           is_admin: 'must be true or false',
           user: {
@@ -279,6 +279,15 @@ describe Metaractor do
 
         expect(result.errors.full_messages_for(:user)).to include(
           'title cannot be blank',
+          'username must be unique',
+          'username must not be blank'
+        )
+
+        expect(result.errors.full_messages_for(:user, :title)).to include(
+          'title cannot be blank'
+        )
+
+        expect(result.errors.full_messages_for(:user, :username)).to include(
           'username must be unique',
           'username must not be blank'
         )
