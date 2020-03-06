@@ -17,7 +17,10 @@ module Metaractor
           result.invalidate!
         end
 
-        if !result.errors.empty? || (success != nil && !success) || (failure != nil && failure)
+        if !result.errors.empty? ||
+            result.invalid? ||
+            (success != nil && !success) ||
+            (failure != nil && failure)
           result.fail! rescue Interactor::Failure
         end
 
