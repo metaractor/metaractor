@@ -269,6 +269,21 @@ describe Metaractor do
           }
         })
 
+        expect(result.errors).to include(
+          'Invalid configuration',
+          'is_admin must be true or false',
+          'user.title cannot be blank',
+          'user.username must be unique',
+          'user.username must not be blank'
+        )
+
+        expect(result).to include_errors(
+          'username must be unique',
+          'username must not be blank'
+        ).at_path(:user, :username)
+
+        expect(result).to include_errors('user.title cannot be blank')
+
         expect(result.error_messages).to include(
           'Invalid configuration',
           'is_admin must be true or false',
@@ -291,6 +306,9 @@ describe Metaractor do
           'username must be unique',
           'username must not be blank'
         )
+
+        expect(result.errors[:user, :username]).to include 'must be unique'
+        expect(result.errors.dig(:user, :username)).to include 'must be unique'
       end
     end
 

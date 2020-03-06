@@ -8,7 +8,7 @@ module Metaractor
       @tree = Sycamore::Tree.new
     end
 
-    def_delegators :@tree, :to_h, :empty?, :include?
+    def_delegators :@tree, :to_h, :empty?
 
     def add(error: {}, errors: {})
       trees = []
@@ -63,6 +63,15 @@ module Metaractor
       end
     end
     alias [] dig
+
+    def include?(*elements)
+      if elements.size == 1 &&
+          elements.first.is_a?(Hash)
+        @tree.include?(*elements)
+      else
+        full_messages.include?(*elements)
+      end
+    end
 
     private
 
