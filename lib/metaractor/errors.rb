@@ -74,6 +74,18 @@ module Metaractor
       end
     end
 
+    def slice(*paths)
+      new_tree = Sycamore::Tree.new
+
+      paths.each do |path|
+        if @tree.include_path?(path)
+          new_tree[path] = @tree[path].dup
+        end
+      end
+
+      new_tree.to_h
+    end
+
     private
 
     def message_from_path(path)

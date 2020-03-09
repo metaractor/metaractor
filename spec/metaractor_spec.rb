@@ -318,6 +318,18 @@ describe Metaractor do
         expect(result.errors[:user, :username]).to include 'must be unique'
         expect(result.errors.dig(:user, :username)).to include 'must be unique'
       end
+
+      it 'allows slicing the errors by path' do
+        result = error_test_class.call
+        expect(result).to be_failure
+
+        expect(
+          result.errors.slice(:base, [:user, :title])
+        ).to eq({
+          base: 'Invalid configuration',
+          user: { title: 'cannot be blank' }
+        })
+      end
     end
 
     context 'nested failures' do
