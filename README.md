@@ -104,6 +104,123 @@ before do
 end
 ```
 
+### Structured Errors
+As of v2.0.0, metaractor supports structured errors.
+```ruby
+class UpdateUser
+  include Metaractor
+
+  optional :is_admin
+  optional :user
+
+  def call
+    fail_with_error!(
+      errors: {
+        base: 'Invalid configuration',
+        is_admin: 'must be true or false',
+        user: [ title: 'cannot be blank', username: ['must be unique', 'must not be blank'] ]
+      }
+    )
+  end
+end
+
+result = UpdateUser.call
+result.error_messages
+# => [
+#      'Invalid configuration',
+#      'is_admin must be true or false',
+#      'user.title cannot be blank',
+#      'user.username must be unique',
+#      'user.username must not be blank'
+#    ]
+
+result.errors.full_messages_for(:user)
+# => [
+#      'title cannot be blank',
+#      'username must be unique',
+#      'username must not be blank'
+#    ]
+
+# The arguments to `slice` are a list of paths.
+# In this case we're asking for the errors under `base` and also
+# the errors found under user _and_ title.
+result.errors.slice(:base, [:user, :title])
+# => {
+#      base: 'Invalid configuration',
+#      user: { title: 'cannot be blank' }
+#    }
+
+result.errors.to_h
+# => {
+#      base: 'Invalid configuration',
+#      is_admin: 'must be true or false',
+#      user: {
+#        title: 'cannot be blank',
+#        username: ['must be unique', 'must not be blank']
+#      }
+#    }
+```
+
+### Spec Helpers
+Enable the helpers and/or matchers:
+```ruby
+RSpec.configure do |config|
+  config.include Metaractor::Spec::Helpers
+  config.include Metaractor::Spec::Matchers
+end
+```
+
+#### Helpers
+- `context_creator`
+```ruby
+# context_creator(error_message: nil, error_messages: [], errors: [], valid: nil, invalid: nil, success: nil, failure: nil, **attributes)
+
+# Create a blank context:
+context_creator
+
+# Create a context with some data:
+context_creator(message: message, user: user)
+
+# Create an invalid context:
+context_creator(error_message: "invalid context", invalid: true)
+
+# Create a context with string errors:
+context_creator(error_messages: ["That didn't work", "Neither did this"])
+
+# Create a context with structured errors:
+context_creator(
+  user: user,
+  errors: {
+    user: {
+      email: 'must be unique'
+    },
+    profile: {
+      first_name: 'cannot be blank'
+    }
+  }
+)
+```
+
+#### Matchers
+- `include_errors`
+```ruby
+result = context_creator(
+  errors: {
+    user: [
+      title: 'cannot be blank',
+      username: ['must be unique', 'must not be blank']
+    ]
+  }
+)
+
+expect(result).to include_errors(
+  'username must be unique',
+  'username must not be blank'
+).at_path(:user, :username)
+
+expect(result).to include_errors('user.title cannot be blank')
+```
+
 ### Further Reading
 For more examples of all of the above approaches, please see the specs.
 
