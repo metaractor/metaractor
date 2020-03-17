@@ -1,5 +1,5 @@
 FROM ruby:2.6.5-alpine
-MAINTAINER Ryan Schlesinger <ryan@outstand.com>
+LABEL maintainer="Ryan Schlesinger <ryan@outstand.com>"
 
 RUN addgroup -g 1000 -S metaractor && \
     adduser -u 1000 -S -s /bin/ash -G metaractor metaractor && \
@@ -10,6 +10,9 @@ RUN addgroup -g 1000 -S metaractor && \
       build-base \
       git \
       openssh
+
+ENV BUNDLER_VERSION 2.1.4
+RUN gem install bundler -v ${BUNDLER_VERSION} -i /usr/local/lib/ruby/gems/$(ls /usr/local/lib/ruby/gems) --force
 
 WORKDIR /metaractor
 RUN chown -R metaractor:metaractor /metaractor
