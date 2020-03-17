@@ -3,7 +3,7 @@ module Metaractor
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
-        include Metaractor::Errors
+        include Metaractor::HandleErrors
 
         class << self
           attr_writer :_required_parameters
