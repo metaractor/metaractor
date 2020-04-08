@@ -9,6 +9,7 @@ require 'metaractor/context_validity'
 require 'metaractor/chain_failures'
 require 'metaractor/fail_from_context'
 require 'metaractor/context_has_key'
+require 'metaractor/failure_output'
 
 module Metaractor
   def self.included(base)

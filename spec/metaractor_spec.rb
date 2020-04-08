@@ -419,5 +419,45 @@ describe Metaractor do
         expect(result.has_key?(:bar)).to be_falsy
       end
     end
+
+    context 'Interactor::Failure output' do
+      let!(:chained_class) do
+        Class.new do
+          include Metaractor
+
+          def self.name
+            'Chained'
+          end
+
+          def call
+            context.chained = true
+          end
+        end
+      end
+
+      let!(:failure_output_class) do
+        Class.new do
+          include Metaractor
+
+          required :chained_class
+
+          def call
+            context.parent = true
+            context.chained_class.call!(context)
+            context.delete_field(:chained_class)
+            fail_with_error!(message: 'NOPE')
+          end
+        end
+      end
+
+      it 'gives helpful output' do
+        begin
+          failure_output_class.call!(chained_class: chained_class)
+        rescue Interactor::Failure => e
+          output = e.to_s
+          expect(output).to eq "Errors:\n{:base=>\"NOPE\"}\n\nPreviously Called:\nChained\n\nContext:\n{:parent=>true, :chained=>true}"
+        end
+      end
+    end
   end
 end
