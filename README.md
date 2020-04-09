@@ -221,6 +221,26 @@ expect(result).to include_errors(
 expect(result).to include_errors('user.title cannot be blank')
 ```
 
+### Error Output
+Metaractor customizes the exception message for `Interactor::Failure`:
+```
+Interactor::Failure:
+       Errors:
+       {:base=>"NOPE"}
+
+       Previously Called:
+       Chained
+
+       Context:
+       {:parent=>true, :chained=>true}
+```
+
+You can further customize the exception message:
+```ruby
+# Configure FailureOutput to use awesome_print
+Metaractor::FailureOutput.hash_formatter = ->(hash) { hash.ai }
+```
+
 ### Further Reading
 For more examples of all of the above approaches, please see the specs.
 
