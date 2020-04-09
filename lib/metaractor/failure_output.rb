@@ -25,8 +25,9 @@ module Metaractor
         str << "Previously Called:\n"
         context._called.each do |interactor|
           str << interactor.class.name.to_s
+          str << "\n"
         end
-        str << "\n\n"
+        str << "\n"
       end
 
       str << "Context:\n"

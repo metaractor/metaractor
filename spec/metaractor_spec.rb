@@ -435,16 +435,35 @@ describe Metaractor do
         end
       end
 
+      let!(:another_class) do
+        Class.new do
+          include Metaractor
+
+          def self.name
+            'Another'
+          end
+
+          def call
+            context.another = true
+          end
+        end
+      end
+
       let!(:failure_output_class) do
         Class.new do
           include Metaractor
 
           required :chained_class
+          required :another_class
 
           def call
             context.parent = true
             context.chained_class.call!(context)
+            context.another_class.call!(context)
+
             context.delete_field(:chained_class)
+            context.delete_field(:another_class)
+
             fail_with_error!(message: 'NOPE')
           end
         end
@@ -452,10 +471,13 @@ describe Metaractor do
 
       it 'gives helpful output' do
         begin
-          failure_output_class.call!(chained_class: chained_class)
+          failure_output_class.call!(
+            chained_class: chained_class,
+            another_class: another_class
+          )
         rescue Interactor::Failure => e
           output = e.to_s
-          expect(output).to eq "Errors:\n{:base=>\"NOPE\"}\n\nPreviously Called:\nChained\n\nContext:\n{:parent=>true, :chained=>true}"
+          expect(output).to eq "Errors:\n{:base=>\"NOPE\"}\n\nPreviously Called:\nChained\nAnother\n\nContext:\n{:parent=>true, :chained=>true, :another=>true}"
         end
       end
     end
