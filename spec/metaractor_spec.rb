@@ -273,6 +273,7 @@ describe Metaractor do
           parameter :thing, required: true
           required :foo, allow_blank: true
           optional :bar, default: 'a string'
+          optional :baz, default: 'a string', allow_blank: true
 
           def call
             context.keys = context.to_h.keys
@@ -294,7 +295,8 @@ describe Metaractor do
           recipient: Metaractor::Parameters::Parameter.new(:recipient, required: tree),
           thing: Metaractor::Parameters::Parameter.new(:thing, required: true),
           foo: Metaractor::Parameters::Parameter.new(:foo, required: true, allow_blank: true),
-          bar: Metaractor::Parameters::Parameter.new(:bar, default: 'a string')
+          bar: Metaractor::Parameters::Parameter.new(:bar, default: 'a string'),
+          baz: Metaractor::Parameters::Parameter.new(:baz, default: 'a string', allow_blank: true)
         )
       end
 
@@ -310,15 +312,14 @@ describe Metaractor do
       end
 
       it 'removes blank params' do
-        result = options_class.call!(token: '', thing: 'asdf', foo: '', extra: nil)
-        expect(result.keys).to include(:token, :thing, :foo)
+        result = options_class.call!(token: '', thing: 'asdf', foo: '', extra: nil, baz: '')
+        expect(result.keys).to include(:token, :thing, :foo, :baz)
       end
 
       it 'sets defaults' do
         result = options_class.call!(token: '', thing: 'asdf', foo: '')
         expect(result.bar).to eq 'a string'
       end
-
     end
 
     context 'structured errors' do
