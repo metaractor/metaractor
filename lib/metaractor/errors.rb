@@ -70,7 +70,13 @@ module Metaractor
           elements.first.is_a?(Hash)
         @tree.include?(*elements)
       else
-        full_messages.include?(*elements)
+        if elements.all? {|e| e.is_a? String }
+          full_messages.include?(*elements)
+        else
+          elements.all? do |element|
+            @tree.include_path?(element)
+          end
+        end
       end
     end
 
