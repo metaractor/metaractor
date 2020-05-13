@@ -355,6 +355,8 @@ describe Metaractor do
           }
         })
 
+        expect(result.errors).to include(:is_admin, [:user, :title])
+
         expect(result.errors).to include(
           'Invalid configuration',
           'is_admin must be true or false',
