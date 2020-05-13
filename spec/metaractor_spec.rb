@@ -74,7 +74,7 @@ describe Metaractor do
         Class.new do
           include Metaractor
 
-          allow_blank :special
+          parameter :special, allow_blank: true
 
           def call
             context.keys = context.to_h.keys
@@ -116,6 +116,33 @@ describe Metaractor do
         result = blank_class.call(foo: '', special: nil)
         expect(result.keys).to_not include :foo
         expect(result.keys).to include :special
+      end
+    end
+
+    context 'parameter defaults' do
+      let(:defaults_class) do
+        Class.new do
+          include Metaractor
+
+          required :name
+          parameter :foo, default: -> { context.name }
+          optional :bar, default: 'a string'
+          optional :shared_default, default: 'a string'
+
+          def call
+          end
+        end
+      end
+
+      it 'applies defaults' do
+        result = defaults_class.call!(name: 'Best Defaults')
+        expect(result.foo).to eq 'Best Defaults'
+        expect(result.bar).to eq 'a string'
+        expect(result.shared_default).to eq 'a string'
+
+        result.bar = 'different'
+        expect(result.bar).to eq 'different'
+        expect(result.shared_default).to eq 'a string'
       end
     end
 
@@ -233,6 +260,65 @@ describe Metaractor do
         expect(result).to be_failure
         expect(result).to_not be_valid
         expect(result.error_messages).to include 'Required parameters: (token xor all)'
+      end
+    end
+
+    context 'parameter options' do
+      let(:options_class) do
+        Class.new do
+          include Metaractor
+
+          required or: [:token, or: [:recipient_id, :recipient] ]
+          parameter :token, allow_blank: true
+          parameter :thing, required: true
+          required :foo, allow_blank: true
+          optional :bar, default: 'a string'
+          optional :baz, default: 'a string', allow_blank: true
+
+          def call
+            context.keys = context.to_h.keys
+          end
+        end
+      end
+
+      it 'correctly tracks declared parameters' do
+        action = options_class.new
+
+        expect(action.requirement_trees).to contain_exactly({
+          or: [:token, or: [:recipient_id, :recipient] ]
+        })
+        tree = action.requirement_trees.first
+
+        expect(action.parameters).to eq(
+          token: Metaractor::Parameters::Parameter.new(:token, allow_blank: true, required: tree),
+          recipient_id: Metaractor::Parameters::Parameter.new(:recipient_id, required: tree),
+          recipient: Metaractor::Parameters::Parameter.new(:recipient, required: tree),
+          thing: Metaractor::Parameters::Parameter.new(:thing, required: true),
+          foo: Metaractor::Parameters::Parameter.new(:foo, required: true, allow_blank: true),
+          bar: Metaractor::Parameters::Parameter.new(:bar, default: 'a string'),
+          baz: Metaractor::Parameters::Parameter.new(:baz, default: 'a string', allow_blank: true)
+        )
+      end
+
+      it 'fails without required parameters' do
+        result = options_class.call
+        expect(result).to be_failure
+        expect(result).to_not be_valid
+        expect(result.error_messages).to contain_exactly(
+          'Required parameters: (token or (recipient_id or recipient))',
+          'Required parameters: thing',
+          'Required parameters: foo'
+        )
+      end
+
+      it 'removes blank params' do
+        result = options_class.call!(token: '', thing: 'asdf', foo: '', extra: nil, baz: '')
+        expect(result.keys).to include(:token, :thing, :foo, :baz)
+      end
+
+      it 'sets defaults' do
+        result = options_class.call!(token: '', thing: 'asdf', foo: '')
+        expect(result.bar).to eq 'a string'
       end
     end
 
