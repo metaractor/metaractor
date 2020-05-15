@@ -4,13 +4,50 @@ module Metaractor
   class Errors
     extend Forwardable
 
+    class Error
+      attr_reader :value, :object
+
+      def initialize(value:, object: nil)
+        @value = value
+        @object = object
+      end
+
+      def generate_message(path_elements:)
+        if @value.is_a? Symbol
+          I18n.translate(
+            :"errors.#{}.parameters.#{path_elements.join('.')}.#{@value}",
+            attribute: @value
+          )
+        else
+          "#{path_elements.join('.')} #{@value}".lstrip
+        end
+      end
+
+      def ==(other)
+        if other.is_a?(self.class)
+          @value == other.value
+        else
+          @value == other
+        end
+      end
+      alias eql? ==
+
+      def hash
+        @value.hash
+      end
+
+      def inspect
+        "(Error) #{@value.inspect}"
+      end
+    end
+
     def initialize
       @tree = Sycamore::Tree.new
     end
 
-    def_delegators :@tree, :to_h, :empty?
+    def_delegators :@tree, :empty?
 
-    def add(error: {}, errors: {})
+    def add(error: {}, errors: {}, object: nil)
       trees = []
       [error, errors].each do |h| 
         tree = nil
@@ -29,7 +66,17 @@ module Metaractor
       end
 
       trees.each do |tree|
-        @tree.add(tree)
+        tree.each_path do |path|
+          node = path.node
+          unless node.is_a?(Error)
+            node = Error.new(
+              value: path.node,
+              object: object
+            )
+          end
+
+          @tree[path.parent] << node
+        end
       end
       @tree.compact
     end
@@ -58,9 +105,9 @@ module Metaractor
       result = @tree.dig(*path)
 
       if result.strict_leaves?
-        result.nodes
+        unwrapped_enum(result.nodes)
       else
-        result.to_h
+        unwrapped_tree(result).to_h
       end
     end
     alias [] dig
@@ -68,7 +115,7 @@ module Metaractor
     def include?(*elements)
       if elements.size == 1 &&
           elements.first.is_a?(Hash)
-        @tree.include?(*elements)
+        unwrapped_tree.include?(*elements)
       else
         if elements.all? {|e| e.is_a? String }
           full_messages.include?(*elements)
@@ -89,7 +136,28 @@ module Metaractor
         end
       end
 
-      new_tree.to_h
+      unwrapped_tree(new_tree).to_h
+    end
+
+    def to_h(unwrap: true)
+      if unwrap
+        unwrapped_tree.to_h
+      else
+        @tree.to_h
+      end
+    end
+
+    def inspect
+      str = "<##{self.class.name}: "
+
+      if !self.empty?
+        str << "Errors:\n"
+        str << Metaractor::FailureOutput.format_hash(to_h(unwrap: false))
+        str << "\n"
+      end
+
+      str << ">"
+      str
     end
 
     private
@@ -102,7 +170,32 @@ module Metaractor
         end
       end
 
-      "#{path_elements.join('.')} #{path.node.to_s}".lstrip
+      path.node.generate_message(path_elements: path_elements)
     end
+
+    def unwrapped_tree(orig_tree = @tree)
+      tree = Sycamore::Tree.new
+      orig_tree.each_path do |path|
+        node = path.node
+        if node.is_a? Error
+          node = node.value
+        end
+
+        tree[path.parent] << node
+      end
+
+      tree
+    end
+
+    def unwrapped_enum(orig)
+      orig.map do |element|
+        if element.is_a? Error
+          element.value
+        else
+          element
+        end
+      end
+    end
+
   end
 end

@@ -8,29 +8,29 @@ module Metaractor
       super
     end
 
-    def fail_with_error!(message: nil, errors: nil)
-      add_error(message: message, errors: errors)
+    def fail_with_error!(message: nil, errors: nil, **args)
+      add_error(message: message, errors: errors, **args)
       fail!
     end
 
-    def fail_with_errors!(messages: [], errors: {})
-      add_errors(messages: messages, errors: errors)
+    def fail_with_errors!(messages: [], errors: {}, **args)
+      add_errors(messages: messages, errors: errors, **args)
       fail!
     end
 
-    def add_error(message: nil, errors: nil)
+    def add_error(message: nil, errors: nil, **args)
       if message.nil?
-        add_errors(errors: errors)
+        add_errors(errors: errors, **args)
       else
-        add_errors(messages: Array(message))
+        add_errors(messages: Array(message), **args)
       end
     end
 
-    def add_errors(messages: [], errors: {})
+    def add_errors(messages: [], errors: {}, **args)
       if !messages.empty?
-        self.errors.add(errors: { base: messages })
+        self.errors.add(errors: { base: messages }, **args)
       else
-        self.errors.add(errors: errors)
+        self.errors.add(errors: errors, **args)
       end
     end
 

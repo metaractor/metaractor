@@ -557,6 +557,17 @@ describe Metaractor do
         end
       end
 
+      # Make sure we're using the default formatter
+      around do |example|
+        begin
+          current_formatter = Metaractor.hash_formatter
+          Metaractor.hash_formatter = Metaractor.default_hash_formatter
+          example.run
+        ensure
+          Metaractor.hash_formatter = current_formatter
+        end
+      end
+
       it 'gives helpful output' do
         begin
           failure_output_class.call!(

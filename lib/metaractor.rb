@@ -54,4 +54,24 @@ module Metaractor
   def self.prepend_module(mod)
     modules << { module: mod, method: :prepend }
   end
+
+  def self.format_hash(hash)
+    if @hash_formatter.nil?
+      @hash_formatter = default_hash_formatter
+    end
+
+    @hash_formatter.call(hash)
+  end
+
+  def self.default_hash_formatter
+    ->(hash){ hash.inspect }
+  end
+
+  def self.hash_formatter
+    @hash_formatter
+  end
+
+  def self.hash_formatter=(callable)
+    @hash_formatter = callable
+  end
 end
