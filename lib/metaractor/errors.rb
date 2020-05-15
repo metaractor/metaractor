@@ -152,7 +152,7 @@ module Metaractor
 
       if !self.empty?
         str << "Errors:\n"
-        str << Metaractor::FailureOutput.format_hash(to_h(unwrap: false))
+        str << Metaractor.format_hash(to_h(unwrap: false))
         str << "\n"
       end
 
