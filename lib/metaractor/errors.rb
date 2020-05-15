@@ -32,7 +32,7 @@ module Metaractor
           I18n.translate(
             key,
             default: defaults,
-            value: @value,
+            error_key: @value,
             path_elements: path_elements
           )
         else
