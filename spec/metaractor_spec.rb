@@ -420,6 +420,123 @@ describe Metaractor do
       end
     end
 
+    context 'i18n' do
+      let(:test_class) do
+        Class.new do
+          include Metaractor
+
+          def self.name
+            'Authorization::Roles::CheckRole'
+          end
+
+          def call
+            fail_with_error!(
+              errors: {
+                role: :mismatched_role
+              }
+            )
+          end
+        end
+      end
+
+      let(:top_level_error) do
+        store_translations(
+          :en,
+          errors: {
+            parameters: {
+              role: {
+                mismatched_role: 'Least specific error'
+              }
+            }
+          }
+        )
+      end
+
+      let(:authorization_error) do
+        store_translations(
+          :en,
+          errors: {
+            authorization: {
+              parameters: {
+                role: {
+                  mismatched_role: 'Authorization specific error'
+                }
+              }
+            }
+          }
+        )
+      end
+
+      let(:roles_error) do
+        store_translations(
+          :en,
+          errors: {
+            authorization: {
+              roles: {
+                parameters: {
+                  role: {
+                    mismatched_role: 'Super specific error'
+                  }
+                }
+              }
+            }
+          }
+        )
+      end
+
+      let(:loaded_translations) do
+        [:top_level_error, :authorization_error, :roles_error]
+      end
+
+      before do
+        loaded_translations.each do |t|
+          send(t)
+        end
+
+        I18n.default_locale = :en
+      end
+
+      after do
+        I18n.backend.reload!
+      end
+
+      it 'correctly uses i18n to generate an error message' do
+        result = test_class.call
+        expect(result).to be_failure
+
+        expect(result.errors).to include(:role)
+        expect(result).to include_errors('Super specific error')
+      end
+
+      context 'without the roles message' do
+        let(:loaded_translations) do
+          [:top_level_error, :authorization_error]
+        end
+
+        it 'uses the authorization message' do
+          result = test_class.call
+          expect(result).to be_failure
+
+          expect(result.errors).to include(:role)
+          expect(result).to include_errors('Authorization specific error')
+        end
+      end
+
+      context 'without either the roles or authorization messages' do
+        let(:loaded_translations) do
+          [:top_level_error]
+        end
+
+        it 'uses the top level message' do
+          result = test_class.call
+          expect(result).to be_failure
+
+          expect(result.errors).to include(:role)
+          expect(result).to include_errors('Least specific error')
+        end
+      end
+    end
+
     context 'nested failures' do
       let(:child) do
         Class.new do

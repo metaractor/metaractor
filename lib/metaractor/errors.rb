@@ -14,9 +14,26 @@ module Metaractor
 
       def generate_message(path_elements:)
         if @value.is_a? Symbol
+          defaults = []
+
+          if object.class.respond_to?(:i18n_parent_names) &&
+              !object.class.i18n_parent_names.empty?
+
+            names = object.class.i18n_parent_names
+            until names.empty?
+              defaults << :"errors.#{names.join('.')}.parameters.#{path_elements.join('.')}.#{@value}"
+              names.pop
+            end
+          end
+
+          defaults << :"errors.parameters.#{path_elements.join('.')}.#{@value}"
+
+          key = defaults.shift
           I18n.translate(
-            :"errors.#{}.parameters.#{path_elements.join('.')}.#{@value}",
-            attribute: @value
+            key,
+            default: defaults,
+            value: @value,
+            path_elements: path_elements
           )
         else
           "#{path_elements.join('.')} #{@value}".lstrip

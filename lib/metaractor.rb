@@ -10,6 +10,8 @@ require 'metaractor/chain_failures'
 require 'metaractor/fail_from_context'
 require 'metaractor/context_has_key'
 require 'metaractor/failure_output'
+require 'i18n'
+require 'metaractor/namespace'
 
 module Metaractor
   def self.included(base)
@@ -43,7 +45,8 @@ module Metaractor
       { module: Metaractor::HandleErrors, method: :include },
       { module: Metaractor::Parameters, method: :include },
       { module: Metaractor::RunWithContext, method: :include },
-      { module: Metaractor::ChainFailures, method: :include }
+      { module: Metaractor::ChainFailures, method: :include },
+      { module: Metaractor::Namespace, method: :include }
     ]
   end
 
