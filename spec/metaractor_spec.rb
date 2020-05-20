@@ -429,10 +429,14 @@ describe Metaractor do
             'Authorization::Roles::CheckRole'
           end
 
+          optional :role, :user
+
           def call
             fail_with_error!(
               errors: {
-                role: :mismatched_role
+                base: :internal_error,
+                role: :mismatched_role,
+                user: :blank
               }
             )
           end
@@ -444,6 +448,8 @@ describe Metaractor do
           :en,
           errors: {
             parameters: {
+              blank: '%{parameter} cannot be blank',
+              internal_error: 'Internal Error',
               role: {
                 mismatched_role: 'Least specific error'
               }
@@ -504,6 +510,8 @@ describe Metaractor do
         result = test_class.call
         expect(result).to be_failure
 
+        expect(result).to include_errors('user cannot be blank')
+        expect(result).to include_errors('Internal Error')
         expect(result.errors).to include(:role)
         expect(result).to include_errors('Super specific error')
       end
