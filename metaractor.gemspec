@@ -20,8 +20,11 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'interactor', '~> 3.1'
   spec.add_runtime_dependency 'sycamore', '~> 0.3'
+  spec.add_runtime_dependency 'i18n', '~> 1.8'
 
   spec.add_development_dependency 'bundler', '~> 2'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.9'
+  spec.add_development_dependency 'awesome_print', '~> 1.8'
+  spec.add_development_dependency 'pry-byebug', '~> 3.9'
 end
