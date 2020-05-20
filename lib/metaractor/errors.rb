@@ -21,19 +21,24 @@ module Metaractor
 
             names = object.class.i18n_parent_names
             until names.empty?
-              defaults << :"errors.#{names.join('.')}.parameters.#{path_elements.join('.')}.#{@value}"
+              defaults << ['errors', names.join('.'), 'parameters', path_elements.join('.'), @value.to_s].reject do |item|
+                item.nil? || item == ''
+              end.join('.').to_sym
               names.pop
             end
           end
 
-          defaults << :"errors.parameters.#{path_elements.join('.')}.#{@value}"
+          unless path_elements.empty?
+            defaults << :"errors.parameters.#{path_elements.join('.')}.#{@value}"
+          end
+          defaults << :"errors.parameters.#{@value}"
 
           key = defaults.shift
           I18n.translate(
             key,
             default: defaults,
             error_key: @value,
-            path_elements: path_elements
+            parameter: path_elements.last
           )
         else
           "#{path_elements.join('.')} #{@value}".lstrip
