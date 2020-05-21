@@ -234,7 +234,7 @@ You can also use this feature to work with machine readable keys:
 ```ruby
 result = Users::UpdateUser.call
 if result.failure? &&
-  result.errors[:is_admin] == :true_or_false
+  result.errors[:is_admin].include?(:true_or_false)
 
   # handle this specific case
 end
