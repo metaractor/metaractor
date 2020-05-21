@@ -168,6 +168,7 @@ module Metaractor
         @tree.to_h
       end
     end
+    alias to_hash to_h
 
     def inspect
       str = "<##{self.class.name}: "
