@@ -1,0 +1,91 @@
+env:
+  BUILDKITE_PLUGIN_DOCKER_CACHE_S3_BUCKET: "outstand-buildkite-cache"
+  # BUILDKITE_PLUGIN_DOCKER_CACHE_VOLUME_DEBUG: "true"
+  BUILDKITE_PLUGIN_DOCKER_COMPOSE_SHELL: "false"
+  # BUILDKITE_PLUGIN_DOCKER_COMPOSE_UPLOAD_CONTAINER_LOGS: "always"
+  BUILDKITE_PLUGIN_DOCKER_COMPOSE_PULL_RETRIES: 5
+  BUILDKITE_PLUGIN_DOCKER_COMPOSE_PUSH_RETRIES: 5
+  PLUGIN_DOCKER_COMPOSE_VERSION: "17bac3aaee1360e39381b89bb45513b11838238e"
+  PLUGIN_DOCKER_CACHE_VERSION: "f3d8feb52a25c69c75565e9f0b80375eae51850a"
+
+steps:
+  - label: ":docker: Build :rails:"
+    command: ./docker/ci-prep.sh
+    key: build
+    plugins:
+      - seek-oss/aws-sm#v2.2.1:
+          env:
+            DOCKER_LOGIN_PASSWORD: "/buildkite/docker_password"
+
+      - docker-login#v2.0.1:
+          username: outstandci
+
+      - ecr#v2.1.1:
+          login: true
+          region: "us-east-1"
+
+      - https://github.com/outstand/docker-compose-buildkite-plugin.git#${PLUGIN_DOCKER_COMPOSE_VERSION}:
+          build: metaractor
+          image-repository: 786715713882.dkr.ecr.us-east-1.amazonaws.com/ci-images
+          config:
+            - docker-compose.yml
+
+  - label: ":bundler: :rubygems:"
+    key: bundle_install
+    command: bundle install
+    depends_on: build
+    plugins:
+      - seek-oss/aws-sm#v2.2.1:
+          env:
+            DOCKER_LOGIN_PASSWORD: "/buildkite/docker_password"
+
+      - docker-login#v2.0.1:
+          username: outstandci
+
+      - ecr#v2.1.1:
+          login: true
+          region: "us-east-1"
+
+      - https://github.com/outstand/docker-compose-buildkite-plugin.git#${PLUGIN_DOCKER_COMPOSE_VERSION}:
+          run: metaractor
+          dependencies: false
+          config:
+            - docker-compose.yml
+
+      - https://github.com/outstand/docker-cache-buildkite-plugin.git#${PLUGIN_DOCKER_CACHE_VERSION}:
+          name: bundler-cache
+          keys:
+            - v1-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
+            - v1-bundler-cache-{{ arch }}-
+          save: true
+          volumes:
+            - bundler-data
+
+  - label: ":ruby: Specs"
+    command: rspec spec
+    plugins:
+      - seek-oss/aws-sm#v2.2.1:
+          env:
+            DOCKER_LOGIN_PASSWORD: "/buildkite/docker_password"
+          json-to-env:
+            - secret-id: "/buildkite/rails/env_vars"
+
+      - docker-login#v2.0.1:
+          username: outstandci
+
+      - ecr#v2.1.1:
+          login: true
+          region: "us-east-1"
+
+      - https://github.com/outstand/docker-compose-buildkite-plugin.git#${PLUGIN_DOCKER_COMPOSE_VERSION}:
+          run: metaractor
+          config:
+            - docker-compose.yml
+
+      - https://github.com/outstand/docker-cache-buildkite-plugin.git#${PLUGIN_DOCKER_CACHE_VERSION}:
+          name: bundler-cache
+          keys:
+            - v1-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
+            - v1-bundler-cache-{{ arch }}-
+          volumes:
+            - bundler-data
