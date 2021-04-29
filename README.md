@@ -1,4 +1,4 @@
-# Metaractor
+# Metaractor [![Build status](https://badge.buildkite.com/70063a5154eb7366b8b7fd65a875c5f64301bc60f6d29a2ad7.svg)](https://buildkite.com/outstand/metaractor)
 Adds parameter validation and error control to [interactor](https://github.com/collectiveidea/interactor).
 
 ## Installation
