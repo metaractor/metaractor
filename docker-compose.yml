@@ -16,6 +16,9 @@ services:
     stdin_open: true
     tty: true
     command: rake release
+    environment:
+      FIXUID:
+      FIXGID:
     volumes:
       - bundler-data:/usr/local/bundle
       - ~/.gitconfig:/home/metaractor/.gitconfig

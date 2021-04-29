@@ -103,6 +103,24 @@ This works with `allow_blank` and can also be anything that responds to `#call`.
 parameter :role, allow_blank: true, default: -> { context.default_role }
 ```
 
+#### Typecasting/Coersion
+You can supply Metaractor with a callable that will typecast incoming parameters:
+```ruby
+optional :needs_to_be_a_string, type: ->(value) { value.to_s }
+```
+
+You can also configure Metaractor with named types and use them:
+```ruby
+Metaractor.configure do |config|
+  config.register_type(:boolean, ->(value) { ActiveModel::Type::Boolean.new.cast(value) })
+end
+```
+```ruby
+required :is_awesome, type: :boolean
+```
+
+**Note**: Typecasters will _not_ be called on `nil` values.
+
 ### Custom Validation
 Metaractor supports doing custom validation before any user supplied before_hooks run.
 ```ruby
