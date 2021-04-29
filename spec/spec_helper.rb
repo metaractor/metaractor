@@ -1,6 +1,7 @@
 require 'metaractor/spec'
 require 'pry-byebug'
 require 'awesome_print'
+require 'active_model'
 
 Metaractor.hash_formatter = ->(hash) { hash.ai }
 

@@ -14,6 +14,7 @@ module Metaractor
         before :remove_blank_values
         before :apply_defaults
         before :validate_required_parameters
+        before :apply_types
       end
     end
 
@@ -157,6 +158,23 @@ module Metaractor
       when default.respond_to?(:call) then instance_exec(&default)
       when default.respond_to?(:dup) then default.dup
       else default
+      end
+    end
+
+    def apply_types
+      parameters.each do |name, parameter|
+        next unless parameter[:type]
+
+        if context.has_key?(name) && context[name] != nil
+          callable = parameter[:type]
+
+          if callable.is_a?(Symbol)
+            callable = Metaractor.types[callable]
+            raise ArgumentError, "No such type: #{parameter[:type]}" if callable.nil?
+          end
+
+          context[name] = callable.call(context[name])
+        end
       end
     end
 

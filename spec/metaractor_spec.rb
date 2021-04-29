@@ -322,6 +322,81 @@ describe Metaractor do
       end
     end
 
+    context 'parameter types' do
+      let(:types_class) do
+        Class.new do
+          include Metaractor
+
+          required :foo, type: ->(value) { value.to_s }
+          optional :job_title,
+            :job_title_required,
+            type: :boolean
+
+          optional :boom,
+            allow_blank: true,
+            type: ->(value) { raise "BOOM" if value.nil? }
+
+          def call
+          end
+        end
+      end
+
+      before do
+        Metaractor.register_type(
+          :boolean,
+          ->(value) { ActiveModel::Type::Boolean.new.cast(value) }
+        )
+      end
+
+      after do
+        Metaractor.clear_types!
+      end
+
+      it 'casts types from a callable' do
+        result = types_class.call(
+          foo: :a_symbol
+        )
+        expect(result.foo).to eq "a_symbol"
+      end
+
+      it 'casts types from a configured type' do
+        result = types_class.call(
+          foo: :a_symbol,
+          job_title: "1",
+          job_title_required: "false"
+        )
+        expect(result.job_title).to eq true
+        expect(result.job_title_required).to eq false
+      end
+
+      context 'with allow_blank' do
+        let(:types_class) do
+          Class.new do
+            include Metaractor
+
+            optional :boom,
+              allow_blank: true,
+              type: ->(value) { raise "BOOM" if value.nil? }
+
+            optional :pow, type: ->(value) { raise "POW" if value.nil? }
+
+            def call
+            end
+          end
+        end
+
+        it 'does not typecast nil values' do
+          result = types_class.call(
+            boom: nil,
+            pow: nil
+          )
+
+          expect(result.boom).to eq nil
+          expect(result).to_not have_key(:pow)
+        end
+      end
+    end
+
     context 'structured errors' do
       let(:error_test_class) do
         Class.new do

@@ -77,4 +77,16 @@ module Metaractor
   def self.hash_formatter=(callable)
     @hash_formatter = callable
   end
+
+  def self.types
+    @types ||= {}
+  end
+
+  def self.register_type(type, callable)
+    types[type] = callable
+  end
+
+  def self.clear_types!
+    @types = {}
+  end
 end
