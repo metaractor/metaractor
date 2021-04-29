@@ -378,6 +378,8 @@ describe Metaractor do
               allow_blank: true,
               type: ->(value) { raise "BOOM" if value.nil? }
 
+            optional :pow, type: ->(value) { raise "POW" if value.nil? }
+
             def call
             end
           end
@@ -385,10 +387,12 @@ describe Metaractor do
 
         it 'does not typecast nil values' do
           result = types_class.call(
-            boom: nil
+            boom: nil,
+            pow: nil
           )
 
           expect(result.boom).to eq nil
+          expect(result).to_not have_key(:pow)
         end
       end
     end
