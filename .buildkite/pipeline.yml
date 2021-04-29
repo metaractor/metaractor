@@ -9,7 +9,7 @@ env:
   PLUGIN_DOCKER_CACHE_VERSION: "f3d8feb52a25c69c75565e9f0b80375eae51850a"
 
 steps:
-  - label: ":docker: Build :rails:"
+  - label: ":docker: Build"
     command: ./docker/ci-prep.sh
     key: build
     plugins:
@@ -63,6 +63,7 @@ steps:
 
   - label: ":ruby: Specs"
     command: rspec spec
+    depends_on: bundle_install
     plugins:
       - seek-oss/aws-sm#v2.2.1:
           env:
