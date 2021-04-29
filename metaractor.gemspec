@@ -30,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.9'
   spec.add_development_dependency 'awesome_print', '~> 1.8'
   spec.add_development_dependency 'pry-byebug', '~> 3.9'
+  spec.add_development_dependency 'activemodel', '~> 6.1'
 end
