@@ -38,6 +38,10 @@ module Metaractor
         @options[key]
       end
 
+      def has_key?(key)
+        @options.has_key?(key)
+      end
+
       def dig(name, *names)
         @options.dig(name, *names)
       end
