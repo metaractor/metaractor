@@ -143,7 +143,7 @@ module Metaractor
 
     def apply_defaults
       parameters.each do |name, parameter|
-        next unless parameter[:default]
+        next unless parameter.has_key?(:default)
 
         unless context.has_key?(name)
           context[name] = _parameter_default(name)

@@ -128,6 +128,7 @@ describe Metaractor do
           parameter :foo, default: -> { context.name }
           optional :bar, default: 'a string'
           optional :shared_default, default: 'a string'
+          optional :boolean_default, default: false
 
           def call
           end
@@ -139,6 +140,7 @@ describe Metaractor do
         expect(result.foo).to eq 'Best Defaults'
         expect(result.bar).to eq 'a string'
         expect(result.shared_default).to eq 'a string'
+        expect(result.boolean_default).to eq false
 
         result.bar = 'different'
         expect(result.bar).to eq 'different'
