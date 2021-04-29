@@ -5,6 +5,9 @@ services:
     image: outstand/metaractor:dev
     stdin_open: true
     tty: true
+    environment:
+      FIXUID:
+      FIXGID:
     volumes:
       - bundler-data:/usr/local/bundle
       - .:/metaractor

@@ -1,3 +1,5 @@
+FROM outstand/fixuid as fixuid
+
 FROM ruby:2.7.3-alpine
 LABEL maintainer="Ryan Schlesinger <ryan@outstand.com>"
 
@@ -10,6 +12,13 @@ RUN addgroup -g 1000 -S metaractor && \
       build-base \
       git \
       openssh
+
+COPY --from=fixuid /usr/local/bin/fixuid /usr/local/bin/fixuid
+RUN chmod 4755 /usr/local/bin/fixuid && \
+      USER=metaractor && \
+      GROUP=metaractor && \
+      mkdir -p /etc/fixuid && \
+      printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
 
 ENV BUNDLER_VERSION 2.2.16
 RUN gem install bundler -v ${BUNDLER_VERSION} -i /usr/local/lib/ruby/gems/$(ls /usr/local/lib/ruby/gems) --force
