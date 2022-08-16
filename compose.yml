@@ -1,4 +1,3 @@
-version: '3.6'
 services:
   metaractor:
     build: .
@@ -15,6 +14,7 @@ services:
     volumes:
       - bundler-data:/usr/local/bundle
       - .:/metaractor
+
   release:
     image: outstand/metaractor:dev
     stdin_open: true

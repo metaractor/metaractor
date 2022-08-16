@@ -71,18 +71,19 @@ module Metaractor
 
     def add(error: {}, errors: {}, object: nil)
       trees = []
-      [error, errors].each do |h| 
+      [error, errors].each do |h|
         tree = nil
         if h.is_a? Metaractor::Errors
           tree = Sycamore::Tree.from(h.instance_variable_get(:@tree))
         else
-          tree = Sycamore::Tree.from(h)
+          tree = Sycamore::Tree.from(h.to_h)
         end
 
         unless tree.empty?
-          if tree.nodes.any? {|node| tree.strict_leaf?(node) }
+          if tree.nodes.any? { |node| tree.strict_leaf?(node) }
             raise ArgumentError, "Invalid hash!"
           end
+
           trees << tree
         end
       end

@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
+set -euo pipefail
 
 su-exec ${FIXUID:?Missing FIXUID var}:${FIXGID:?Missing FIXGID var} fixuid
 
@@ -27,7 +27,7 @@ if [ "$1" = 'bundle' ]; then
 elif ls /usr/local/bundle/bin | grep -q "\b$1\b"; then
   set -- su-exec metaractor bundle exec "$@"
 
-  su-exec metaractor ash -c 'bundle check || bundle install'
+  su-exec metaractor bash -c 'bundle check || bundle install'
 fi
 
 exec "$@"
