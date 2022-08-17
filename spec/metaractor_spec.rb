@@ -497,7 +497,7 @@ describe Metaractor do
       end
 
       it "handles a delegated error hash" do
-        messages = SimpleDelegator.new({ user: ["must be awesome"] })
+        messages = SimpleDelegator.new({ user: SimpleDelegator.new(["must be awesome"]) })
 
         errors = Metaractor::Errors.new
         expect { errors.add(errors: messages) }.to_not raise_error

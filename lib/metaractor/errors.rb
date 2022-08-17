@@ -76,7 +76,7 @@ module Metaractor
         if h.is_a? Metaractor::Errors
           tree = Sycamore::Tree.from(h.instance_variable_get(:@tree))
         else
-          tree = Sycamore::Tree.from(h.to_h)
+          tree = Sycamore::Tree.from(normalize_error_hash(h))
         end
 
         unless tree.empty?
@@ -221,5 +221,34 @@ module Metaractor
       end
     end
 
+    def normalize_error_hash(hash)
+      deep_transform_values_in_object(hash, &method(:transform_delegator))
+    end
+
+    def transform_delegator(value)
+      if value.is_a?(Delegator)
+        if value.respond_to?(:to_hash)
+          deep_transform_values_in_object(value.to_hash, &method(:transform_delegator))
+        elsif value.respond_to?(:to_a)
+          deep_transform_values_in_object(value.to_a, &method(:transform_delegator))
+        else
+          value
+        end
+      else
+        value
+      end
+    end
+
+    # Lifted from Rails
+    def deep_transform_values_in_object(object, &block)
+      case object
+      when Hash
+        object.transform_values { |value| deep_transform_values_in_object(value, &block) }
+      when Array
+        object.map { |e| deep_transform_values_in_object(e, &block) }
+      else
+        yield(object)
+      end
+    end
   end
 end
