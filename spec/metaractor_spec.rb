@@ -501,6 +501,10 @@ describe Metaractor do
 
         errors = Metaractor::Errors.new
         expect { errors.add(errors: messages) }.to_not raise_error
+
+        expect(errors).to include(
+          user: "must be awesome"
+        )
       end
     end
 
