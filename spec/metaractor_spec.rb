@@ -495,6 +495,17 @@ describe Metaractor do
           user: { title: 'cannot be blank' }
         })
       end
+
+      it "handles a delegated error hash" do
+        messages = SimpleDelegator.new({ user: SimpleDelegator.new(["must be awesome"]) })
+
+        errors = Metaractor::Errors.new
+        expect { errors.add(errors: messages) }.to_not raise_error
+
+        expect(errors).to include(
+          user: "must be awesome"
+        )
+      end
     end
 
     context 'i18n' do
