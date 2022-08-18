@@ -13,6 +13,8 @@ chown_dir() {
 }
 
 chown_dir /usr/local/bundle
+chown_dir /home/metaractor/.local/share/gem
+chown_dir /home/metaractor/.gem
 
 if [ "$(which "$1")" = '' ]; then
   if [ "$(ls -A /usr/local/bundle/bin)" = '' ]; then
