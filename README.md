@@ -347,6 +347,7 @@ For more examples of all of the above approaches, please see the specs.
 
 - `docker compose build --pull`
 - `docker compose run --rm metaractor` to run specs
+
 or with the Deskfile loaded:
 - `rspec spec`
 
