@@ -345,13 +345,15 @@ For more examples of all of the above approaches, please see the specs.
 
 ## Development
 
-- `docker-compose build --pull`
-- `docker-compose run --rm metaractor` to run specs
+- `docker compose build --pull`
+- `docker compose run --rm metaractor` to run specs
+or with the Deskfile loaded:
+- `rspec spec`
 
 To release a new version:
 - Update the version number in `version.rb` and commit the result.
-- `docker-compose build --pull`
-- `docker-compose run --rm release`
+- `docker compose build --pull`
+- `docker compose run --rm release`
 
 ## Contributing
 
