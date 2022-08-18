@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Docker host has the following git config:
+# helper = !$(brew --prefix)/bin/gh auth git-credential
+#
+# We're going to lie inside the container so we can find the local gh
+
+echo "/usr"

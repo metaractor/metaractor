@@ -55,6 +55,8 @@ RUN set -eux; \
       rm -f /var/lib/apt/lists/*_*; \
       rm -rf /tmp/build
 
+COPY brew-shim /usr/bin/brew
+
 WORKDIR /metaractor
 RUN set -eux; \
       \
