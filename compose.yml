@@ -27,8 +27,8 @@ services:
       - bundler-data:/usr/local/bundle
       - ~/.gitconfig:/home/metaractor/.gitconfig
       - ~/.gitconfig.user:/home/metaractor/.gitconfig.user
-      - ~/.ssh/id_rsa:/home/metaractor/.ssh/id_rsa
-      - ~/.gem:/home/metaractor/.gem
+      - ~/.config/gh/hosts.yml:/home/metaractor/.config/gh/hosts.yml
+      - ~/.local/share/gem/credentials:/home/metaractor/.local/share/gem/credentials
 
 volumes:
   bundler-data:
