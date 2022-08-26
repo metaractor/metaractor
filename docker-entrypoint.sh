@@ -26,6 +26,10 @@ fi
 
 if [ "$1" = 'bundle' ]; then
   set -- su-exec metaractor "$@"
+elif [ "$1" = 'rake' ]; then
+  set -- su-exec metaractor bundle exec "$@"
+
+  su-exec metaractor bash -c 'bundle check || bundle install'
 elif ls /usr/local/bundle/bin | grep -q "\b$1\b"; then
   set -- su-exec metaractor bundle exec "$@"
 

@@ -57,8 +57,8 @@ steps:
       - https://github.com/outstand/docker-cache-buildkite-plugin.git#${PLUGIN_DOCKER_CACHE_VERSION}:
           name: bundler-cache
           keys:
-            - v1-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
-            - v1-bundler-cache-{{ arch }}-
+            - v2-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
+            - v2-bundler-cache-{{ arch }}-
           save: true
           volumes:
             - bundler-data
@@ -87,7 +87,7 @@ steps:
       - https://github.com/outstand/docker-cache-buildkite-plugin.git#${PLUGIN_DOCKER_CACHE_VERSION}:
           name: bundler-cache
           keys:
-            - v1-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
-            - v1-bundler-cache-{{ arch }}-
+            - v2-bundler-cache-{{ arch }}-{{ checksum "metaractor.gemspec" }}-{{ checksum "Gemfile" }}
+            - v2-bundler-cache-{{ arch }}-
           volumes:
             - bundler-data

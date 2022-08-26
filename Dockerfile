@@ -1,7 +1,7 @@
 FROM outstand/su-exec:latest as su-exec
 FROM outstand/fixuid as fixuid
 
-FROM ruby:2.7.6-bullseye
+FROM ruby:3.1.2-bullseye
 LABEL maintainer="Ryan Schlesinger <ryan@outstand.com>"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -36,7 +36,7 @@ RUN set -eux; \
       mkdir -p /etc/fixuid; \
       printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
 
-ENV BUNDLER_VERSION 2.3.20
+ENV BUNDLER_VERSION 2.3.21
 ENV GITHUB_CLI_VERSION 2.14.4
 ENV GITHUB_CLI_CHECKSUM b0073fdcc07d1de5a19a1a782c7ad9f593f991da06a809ea39f0b6148869aa96
 RUN set -eux; \
