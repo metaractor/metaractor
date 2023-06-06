@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "interactor", "~> 3.1"
-  spec.add_runtime_dependency "metaractor-sycamore", "~> 0.4", ">= 0.4.2"
+  spec.add_runtime_dependency "metaractor-sycamore", "~> 0.4", ">= 0.4.3"
   spec.add_runtime_dependency "i18n", "~> 1.8"
 
   spec.add_development_dependency "bundler", "~> 2"
