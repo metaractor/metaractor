@@ -1,5 +1,5 @@
-require 'sycamore'
-require 'forwardable'
+require "sycamore"
+require "forwardable"
 module Metaractor
   class Errors
     extend Forwardable
@@ -21,15 +21,15 @@ module Metaractor
 
             names = object.class.i18n_parent_names
             until names.empty?
-              defaults << ['errors', names.join('.'), 'parameters', path_elements.join('.'), @value.to_s].reject do |item|
-                item.nil? || item == ''
-              end.join('.').to_sym
+              defaults << ["errors", names.join("."), "parameters", path_elements.join("."), @value.to_s].reject do |item|
+                item.nil? || item == ""
+              end.join(".").to_sym
               names.pop
             end
           end
 
           unless path_elements.empty?
-            defaults << :"errors.parameters.#{path_elements.join('.')}.#{@value}"
+            defaults << :"errors.parameters.#{path_elements.join(".")}.#{@value}"
           end
           defaults << :"errors.parameters.#{@value}"
 
@@ -41,18 +41,18 @@ module Metaractor
             parameter: path_elements.last
           )
         else
-          "#{path_elements.join('.')} #{@value}".lstrip
+          "#{path_elements.join(".")} #{@value}".lstrip
         end
       end
 
       def ==(other)
-        if other.is_a?(self.class)
-          @value == other.value
+        @value == if other.is_a?(self.class)
+          other.value
         else
-          @value == other
+          other
         end
       end
-      alias eql? ==
+      alias_method :eql?, :==
 
       def hash
         @value.hash
@@ -73,10 +73,10 @@ module Metaractor
       trees = []
       [error, errors].each do |h|
         tree = nil
-        if h.is_a? Metaractor::Errors
-          tree = Sycamore::Tree.from(h.instance_variable_get(:@tree))
+        tree = if h.is_a? Metaractor::Errors
+          Sycamore::Tree.from(h.instance_variable_get(:@tree))
         else
-          tree = Sycamore::Tree.from(normalize_error_hash(h))
+          Sycamore::Tree.from(normalize_error_hash(h))
         end
 
         unless tree.empty?
@@ -112,7 +112,7 @@ module Metaractor
 
       messages
     end
-    alias to_a full_messages
+    alias_method :to_a, :full_messages
 
     def full_messages_for(*path)
       child_tree = @tree.fetch_path(path)
@@ -133,19 +133,17 @@ module Metaractor
         unwrapped_tree(result).to_h
       end
     end
-    alias [] dig
+    alias_method :[], :dig
 
     def include?(*elements)
       if elements.size == 1 &&
           elements.first.is_a?(Hash)
         unwrapped_tree.include?(*elements)
+      elsif elements.all? { |e| e.is_a? String }
+        full_messages.include?(*elements)
       else
-        if elements.all? {|e| e.is_a? String }
-          full_messages.include?(*elements)
-        else
-          elements.all? do |element|
-            @tree.include_path?(element)
-          end
+        elements.all? do |element|
+          @tree.include_path?(element)
         end
       end
     end
@@ -169,12 +167,12 @@ module Metaractor
         @tree.to_h
       end
     end
-    alias to_hash to_h
+    alias_method :to_hash, :to_h
 
     def inspect
       str = "<##{self.class.name}: "
 
-      if !self.empty?
+      if !empty?
         str << "Errors:\n"
         str << Metaractor.format_hash(to_h(unwrap: false))
         str << "\n"

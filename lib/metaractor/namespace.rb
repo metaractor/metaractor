@@ -11,7 +11,7 @@ module Metaractor
         if defined?(@parent_name)
           @parent_name
         else
-          parent_name = name =~ /::[^:]+\z/ ? -$` : nil
+          parent_name = (name =~ /::[^:]+\z/) ? -$` : nil
           @parent_name = parent_name unless frozen?
           parent_name
         end
@@ -26,7 +26,7 @@ module Metaractor
       end
 
       def i18n_parent_names
-        module_parent_names.map {|name| underscore_module_name(name).to_sym }
+        module_parent_names.map { |name| underscore_module_name(name).to_sym }
       end
 
       private
@@ -40,7 +40,6 @@ module Metaractor
         word.downcase!
         word
       end
-
     end
   end
 end

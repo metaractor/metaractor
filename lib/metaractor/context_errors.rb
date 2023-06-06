@@ -28,7 +28,7 @@ module Metaractor
 
     def add_errors(messages: [], errors: {}, **args)
       if !messages.empty?
-        self.errors.add(errors: { base: messages }, **args)
+        self.errors.add(errors: {base: messages}, **args)
       else
         self.errors.add(errors: errors, **args)
       end

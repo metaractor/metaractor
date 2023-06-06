@@ -1,7 +1,7 @@
 module Metaractor
   module FailureOutput
     def to_s
-      str = ''
+      str = ""
 
       if !context.errors.empty?
         str << "Errors:\n"
@@ -19,7 +19,7 @@ module Metaractor
       end
 
       str << "Context:\n"
-      str << Metaractor.format_hash(context.to_h.reject{|k,_| k == :errors})
+      str << Metaractor.format_hash(context.to_h.except(:errors))
       str
     end
   end

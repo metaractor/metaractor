@@ -31,7 +31,7 @@ module Metaractor
       def <=>(other)
         return nil unless other.instance_of? self.class
         return nil if name == other.name && options != other.options
-        self.name.to_s <=> other.name.to_s
+        name.to_s <=> other.name.to_s
       end
 
       def [](key)
@@ -59,16 +59,17 @@ module Metaractor
       end
 
       protected
+
       attr_reader :options
     end
 
     module ClassMethods
       def parameter(name, **options)
-        if param = self.parameter_hash[name.to_sym]
+        if (param = parameter_hash[name.to_sym])
           param.merge!(**options)
         else
           Parameter.new(name, **options).tap do |parameter|
-            self.parameter_hash[parameter.name] = parameter
+            parameter_hash[parameter.name] = parameter
           end
         end
       end
@@ -90,7 +91,7 @@ module Metaractor
       def required(*params, **options)
         if params.empty?
           tree = options
-          self.requirement_trees << tree
+          requirement_trees << tree
           parameters(*parameters_in_tree(tree), required: tree)
         else
           parameters(*params, required: true, **options)
@@ -103,7 +104,7 @@ module Metaractor
 
       def validate_parameters(*hooks, &block)
         hooks << block if block
-        hooks.each {|hook| validate_hooks.push(hook) }
+        hooks.each { |hook| validate_hooks.push(hook) }
       end
 
       def validate_hooks
@@ -112,7 +113,7 @@ module Metaractor
 
       def parameters_in_tree(tree)
         if tree.respond_to?(:to_h)
-          tree.to_h.values.first.to_a.flat_map {|t| parameters_in_tree(t)}
+          tree.to_h.values.first.to_a.flat_map { |t| parameters_in_tree(t) }
         else
           [tree]
         end
@@ -128,7 +129,7 @@ module Metaractor
     end
 
     def requirement_trees=(trees)
-      self.class.requirement_trees=(trees)
+      self.class.requirement_trees = (trees)
     end
 
     def remove_blank_values
@@ -156,12 +157,14 @@ module Metaractor
     end
 
     def _parameter_default(name)
-      default = self.parameters[name][:default]
+      default = parameters[name][:default]
 
-      case
-      when default.respond_to?(:call) then instance_exec(&default)
-      when default.respond_to?(:dup) then default.dup
-      else default
+      if default.respond_to?(:call)
+        instance_exec(&default)
+      elsif default.respond_to?(:dup)
+        default.dup
+      else
+        default
       end
     end
 
@@ -169,7 +172,7 @@ module Metaractor
       parameters.each do |name, parameter|
         next unless parameter[:type]
 
-        if context.has_key?(name) && context[name] != nil
+        if context.has_key?(name) && !context[name].nil?
           callable = parameter[:type]
 
           if callable.is_a?(Symbol)
@@ -206,7 +209,7 @@ module Metaractor
       valid, message = parameter_valid? param
 
       if !valid
-        if message_override != nil
+        if !message_override.nil?
           add_parameter_error(param: param, message: message_override)
         else
           add_parameter_error(message: "Required parameters: #{message}")
@@ -234,16 +237,16 @@ module Metaractor
 
         case operator
         when :or
-          return valids.any?, "(#{messages.join(' or ')})"
+          [valids.any?, "(#{messages.join(" or ")})"]
         when :xor
-          return valids.one?, "(#{messages.join(' xor ')})"
+          [valids.one?, "(#{messages.join(" xor ")})"]
         when :and
-          return valids.all?, "(#{messages.join(' and ')})"
+          [valids.all?, "(#{messages.join(" and ")})"]
         else
           raise "invalid required parameter #{param.inspect}"
         end
       else
-        return context[param] != nil, param.to_s
+        [!context[param].nil?, param.to_s]
       end
     end
 
@@ -256,7 +259,7 @@ module Metaractor
       run_hooks(self.class.validate_hooks)
     end
 
-    def add_parameter_error(param: nil, message:)
+    def add_parameter_error(message:, param: nil)
       add_error(
         message: "#{param} #{message}".lstrip
       )

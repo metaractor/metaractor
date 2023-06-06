@@ -1,17 +1,17 @@
-require 'metaractor/version'
-require 'interactor'
-require 'metaractor/errors'
-require 'metaractor/handle_errors'
-require 'metaractor/context_errors'
-require 'metaractor/parameters'
-require 'metaractor/run_with_context'
-require 'metaractor/context_validity'
-require 'metaractor/chain_failures'
-require 'metaractor/fail_from_context'
-require 'metaractor/context_has_key'
-require 'metaractor/failure_output'
-require 'i18n'
-require 'metaractor/namespace'
+require "metaractor/version"
+require "interactor"
+require "metaractor/errors"
+require "metaractor/handle_errors"
+require "metaractor/context_errors"
+require "metaractor/parameters"
+require "metaractor/run_with_context"
+require "metaractor/context_validity"
+require "metaractor/chain_failures"
+require "metaractor/fail_from_context"
+require "metaractor/context_has_key"
+require "metaractor/failure_output"
+require "i18n"
+require "metaractor/namespace"
 
 module Metaractor
   def self.included(base)
@@ -42,20 +42,20 @@ module Metaractor
 
   def self.default_modules
     [
-      { module: Metaractor::HandleErrors, method: :include },
-      { module: Metaractor::Parameters, method: :include },
-      { module: Metaractor::RunWithContext, method: :include },
-      { module: Metaractor::ChainFailures, method: :include },
-      { module: Metaractor::Namespace, method: :include }
+      {module: Metaractor::HandleErrors, method: :include},
+      {module: Metaractor::Parameters, method: :include},
+      {module: Metaractor::RunWithContext, method: :include},
+      {module: Metaractor::ChainFailures, method: :include},
+      {module: Metaractor::Namespace, method: :include}
     ]
   end
 
   def self.include_module(mod)
-    modules << { module: mod, method: :include }
+    modules << {module: mod, method: :include}
   end
 
   def self.prepend_module(mod)
-    modules << { module: mod, method: :prepend }
+    modules << {module: mod, method: :prepend}
   end
 
   def self.format_hash(hash)
@@ -67,7 +67,7 @@ module Metaractor
   end
 
   def self.default_hash_formatter
-    ->(hash){ hash.inspect }
+    ->(hash) { hash.inspect }
   end
 
   def self.hash_formatter

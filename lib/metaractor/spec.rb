@@ -1,5 +1,5 @@
-require 'metaractor'
-require 'forwardable'
+require "metaractor"
+require "forwardable"
 
 module Metaractor
   module Spec
@@ -13,15 +13,19 @@ module Metaractor
         result.add_errors(messages: error_messages)
         result.add_errors(errors: errors)
 
-        if (valid != nil && !valid) || (invalid != nil && invalid)
+        if (!valid.nil? && !valid) || (!invalid.nil? && invalid)
           result.invalidate!
         end
 
         if !result.errors.empty? ||
             result.invalid? ||
-            (success != nil && !success) ||
-            (failure != nil && failure)
-          result.fail! rescue Interactor::Failure
+            (!success.nil? && !success) ||
+            (!failure.nil? && failure)
+          begin
+            result.fail!
+          rescue
+            Interactor::Failure
+          end
         end
 
         result
@@ -69,6 +73,5 @@ module Metaractor
         end
       end
     end
-
   end
 end

@@ -1,5 +1,6 @@
 module Metaractor
   class Error < StandardError; end
+
   class InvalidError < Error; end
 
   module HandleErrors
