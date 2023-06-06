@@ -1,3 +1,0 @@
-rspec() {
-  docker compose run --rm metaractor rspec "$@"
-}

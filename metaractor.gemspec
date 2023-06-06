@@ -8,12 +8,12 @@ Gem::Specification.new do |spec|
   spec.version       = Metaractor::VERSION
   spec.license       = 'Apache-2.0'
   spec.authors       = ['Ryan Schlesinger']
-  spec.email         = ['ryan@outstand.com']
+  spec.email         = ['ryan@ryanschlesinger.com']
 
   spec.summary       = %q{Adds parameter validation and error control to interactor}
   spec.metadata      = {
-    "homepage_uri" => "https://github.com/outstand/metaractor",
-    "source_code_uri" => "https://github.com/outstand/metaractor"
+    "homepage_uri" => "https://github.com/metaractor/metaractor",
+    "source_code_uri" => "https://github.com/metaractor/metaractor"
   }
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'interactor', '~> 3.1'
-  spec.add_runtime_dependency 'outstand-sycamore', '0.4.0'
+  spec.add_runtime_dependency 'metaractor-sycamore', '~> 0.4', '>= 0.4.2'
   spec.add_runtime_dependency 'i18n', '~> 1.8'
 
   spec.add_development_dependency 'bundler', '~> 2'

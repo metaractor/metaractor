@@ -1,7 +1,5 @@
 ![logo-color](https://user-images.githubusercontent.com/146013/225313017-ea1e42d6-741d-4db6-a492-a1e75106d720.png)
 
-[![Build status](https://badge.buildkite.com/70063a5154eb7366b8b7fd65a875c5f64301bc60f6d29a2ad7.svg)](https://buildkite.com/outstand/metaractor)
-
 Adds parameter validation and error control to [interactor](https://github.com/collectiveidea/interactor).
 
 ## Installation
@@ -57,7 +55,7 @@ See Interactor's [README](https://github.com/collectiveidea/interactor/blob/mast
 Metaractor is meant to be extensible (hence the 'meta').  You can add additional modules in the following way:
 
 ```ruby
-# This is an example from Outstand's production app to add some sidekiq magic.
+# This is an example from a production app to add some sidekiq magic.
 # Feel free to place this in start up code or a Rails initializer.
 Metaractor.configure do |config|
   config.prepend_module Metaractor::SidekiqCallbacks
@@ -361,5 +359,5 @@ To release a new version:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/outstand/metaractor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/metaractor/metaractor.
 
