@@ -346,16 +346,58 @@ For more examples of all of the above approaches, please see the specs.
 
 ## Development
 
-- `docker compose build --pull`
-- `docker compose run --rm metaractor` to run specs
+- Install nix:
+```sh
+sh <(curl -L https://nixos.org/nix/install)
+```
 
-or with the Deskfile loaded:
-- `rspec spec`
+- Configure nix:
+```sh
+sudo tee -a /etc/nix/nix.conf <<EOF
+auto-optimise-store = true
+bash-prompt-prefix = (nix:$name)\040
+experimental-features = nix-command flakes
+extra-nix-path = nixpkgs=flake:nixpkgs
+trusted-users = root $USER
+EOF
+
+sudo pkill nix-daemon
+```
+
+- Set up cachix:
+```sh
+nix profile install 'nixpkgs#cachix'
+cachix use devenv
+```
+
+- Install devenv:
+```sh
+nix profile install --accept-flake-config github:cachix/devenv/latest
+```
+
+- Install direnv:
+```sh
+brew install direnv
+```
+
+- Add the following lines to your ~/.zshrc:
+```sh
+# Nix
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+fi
+# End Nix
+
+export DIRENV_LOG_FORMAT=
+eval "$(direnv hook zsh)"
+```
+
+- `direnv allow`
+- `rspec spec` to run specs
 
 To release a new version:
 - Update the version number in `version.rb` and commit the result.
-- `docker compose build --pull`
-- `docker compose run --rm release`
+- `rake release`
 
 ## Contributing
 
