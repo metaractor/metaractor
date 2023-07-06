@@ -12,6 +12,7 @@ require "metaractor/context_has_key"
 require "metaractor/failure_output"
 require "i18n"
 require "metaractor/namespace"
+require "metaractor/organizer"
 
 module Metaractor
   def self.included(base)
