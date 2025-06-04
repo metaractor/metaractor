@@ -21,7 +21,7 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          version=$(ruby -e 'require_relative "lib/metaractor/version.rb"; puts Metaractor.version')
+          version=$(ruby -e 'require_relative "lib/metaractor/version.rb"; puts Metaractor::VERSION')
           echo "APP_VERSION=$version" >> $GITHUB_ENV
 
       # Release
