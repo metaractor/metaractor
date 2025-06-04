@@ -27,6 +27,8 @@ module Metaractor
     end
 
     def add_errors(messages: [], errors: {}, **args)
+      retry! if args.delete(:retry)
+
       if !messages.empty?
         self.errors.add(errors: {base: messages}, **args)
       else
@@ -36,6 +38,14 @@ module Metaractor
 
     def error_messages
       errors.full_messages
+    end
+
+    def fail_from_context(context:)
+      return if context.equal?(self)
+
+      invalidate! if context.invalid?
+      add_errors(errors: context.errors.to_h)
+      @failure = true
     end
   end
 end
