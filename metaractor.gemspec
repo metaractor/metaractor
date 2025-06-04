@@ -22,12 +22,12 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "interactor", "~> 3.1"
   spec.add_runtime_dependency "metaractor-sycamore", "~> 0.4", ">= 0.4.3"
-  spec.add_runtime_dependency "i18n", "~> 1.8"
+  spec.add_runtime_dependency "i18n", "~> 1.14"
 
   spec.add_development_dependency "bundler", "~> 2"
   spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "rspec", "~> 3.9"
-  spec.add_development_dependency "awesome_print", "~> 1.8"
-  spec.add_development_dependency "pry-byebug", "~> 3.9"
-  spec.add_development_dependency "activemodel", "~> 6.1"
+  spec.add_development_dependency "rspec", "~> 3.13"
+  spec.add_development_dependency "amazing_print", "~> 1.8"
+  spec.add_development_dependency "debug", "~> 1.10"
+  spec.add_development_dependency "activemodel", "~> 8"
 end
