@@ -786,7 +786,7 @@ describe Metaractor do
         )
       rescue Interactor::Failure => e
         output = e.to_s
-        expect(output).to eq "Errors:\n{:base=>\"NOPE\"}\n\nPreviously Called:\nChained\nAnother\n\nContext:\n{:parent=>true, :chained=>true, :another=>true}"
+        expect(output).to eq "Errors:\n{base: \"NOPE\"}\n\nPreviously Called:\nChained\nAnother\n\nContext:\n{parent: true, chained: true, another: true}"
       end
     end
   end
