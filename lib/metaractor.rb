@@ -8,6 +8,7 @@ require "metaractor/parameters"
 require "metaractor/run_with_context"
 require "metaractor/chain_failures"
 require "metaractor/failure_output"
+require "metaractor/delegation"
 require "i18n"
 require "metaractor/namespace"
 require "metaractor/organizer"
@@ -45,7 +46,8 @@ module Metaractor
       {module: Metaractor::Parameters, method: :include},
       {module: Metaractor::RunWithContext, method: :include},
       {module: Metaractor::ChainFailures, method: :include},
-      {module: Metaractor::Namespace, method: :include}
+      {module: Metaractor::Namespace, method: :include},
+      {module: Metaractor::Delegation, method: :include}
     ]
   end
 
