@@ -46,8 +46,8 @@ module Metaractor
       {module: Metaractor::Parameters, method: :include},
       {module: Metaractor::RunWithContext, method: :include},
       {module: Metaractor::ChainFailures, method: :include},
-      {module: Metaractor::Namespace, method: :include},
-      {module: Metaractor::Delegation, method: :include}
+      {module: Metaractor::Namespace, method: :include}
+      # {module: Metaractor::Delegation, method: :include}
     ]
   end
 
