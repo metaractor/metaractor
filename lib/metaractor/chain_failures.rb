@@ -13,8 +13,8 @@ module Metaractor
       raise
     end
 
-    def run
-      run!
+    def run(...)
+      run!(...)
     rescue Interactor::Failure
       # Intentionally rescue all Failures as we're
       # handling child errors by failing the parents
