@@ -12,13 +12,14 @@ gem 'metaractor'
 
 And then execute:
 
-    $ bundle
+    bundle
 
 Or install it yourself as:
 
-    $ gem install metaractor
+    gem install metaractor
 
 ## Usage
+
 ```ruby
 class HighFiveUser
   include Metaractor
@@ -52,6 +53,7 @@ result.error_messages
 See Interactor's [README](https://github.com/collectiveidea/interactor/blob/master/README.md) for more information.
 
 ### Configuration
+
 Metaractor is meant to be extensible (hence the 'meta').  You can add additional modules in the following way:
 
 ```ruby
@@ -64,29 +66,37 @@ end
 ```
 
 ### Required Parameters
+
 Metaractor supports complex required parameter statements and you can chain these together in any manner using `and`, `or`, and `xor`.
+
 ```ruby
 required and: [:token, or: [:recipient_id, :recipient] ]
 ```
 
 You can also mark a parameter as required with the `required` option:
+
 ```ruby
 parameter :user, required: true
 ```
 
 ### Optional Parameters
+
 As optional parameters have no enforcement, they are merely advisory.
+
 ```ruby
 optional :enable_logging
 ```
 
 ### Parameter Options
+
 Metaractor supports arbitrary parameter options. The following are currently built in.
 Note that you can specify a block of `required` or `optional` parameters and then use
 `parameter` or `parameters` to add options to one or more of them.
 
 #### Skipping Blank Parameter Removal
+
 By default Metaractor removes blank values that are passed in. You may skip this behavior on a per-parameter basis:
+
 ```ruby
 parameter :name, allow_blank: true
 ```
@@ -94,28 +104,35 @@ parameter :name, allow_blank: true
 You may check to see if a parameter exists via `context.has_key?`.
 
 #### Default Values
+
 You can specify a default value for a parameter:
+
 ```ruby
 optional :role, default: :user
 ```
 
 This works with `allow_blank` and can also be anything that responds to `#call`.
+
 ```ruby
 parameter :role, allow_blank: true, default: -> { context.default_role }
 ```
 
 #### Typecasting/Coersion
+
 You can supply Metaractor with a callable that will typecast incoming parameters:
+
 ```ruby
 optional :needs_to_be_a_string, type: ->(value) { value.to_s }
 ```
 
 You can also configure Metaractor with named types and use them:
+
 ```ruby
 Metaractor.configure do |config|
   config.register_type(:boolean, ->(value) { ActiveModel::Type::Boolean.new.cast(value) })
 end
 ```
+
 ```ruby
 required :is_awesome, type: :boolean
 ```
@@ -123,7 +140,9 @@ required :is_awesome, type: :boolean
 **Note**: Typecasters will _not_ be called on `nil` values.
 
 ### Custom Validation
+
 Metaractor supports doing custom validation before any user supplied before_hooks run.
+
 ```ruby
 validate_parameters do
   if context.foo == :bar
@@ -137,6 +156,7 @@ end
 ```
 
 If you need to require a parameter from a `before_hook` for any reason, use the bang version of the method:
+
 ```ruby
 before do
   # Be careful with this approach as some user code may run before the parameter validation
@@ -145,7 +165,9 @@ end
 ```
 
 ### Structured Errors
+
 As of v2.0.0, metaractor supports structured errors.
+
 ```ruby
 class UpdateUser
   include Metaractor
@@ -202,7 +224,9 @@ result.errors.to_h
 ```
 
 ### I18n
+
 As of v3.0.0, metaractor supports i18n along with structured errors.
+
 ```ruby
 module Users
   class UpdateUser
@@ -225,6 +249,7 @@ end
 ```
 
 Locale:
+
 ```yaml
 en:
   errors:
@@ -246,10 +271,12 @@ You can see that above with the `users` key in the locale.
 
 The i18n integration will walk its way from the most specific message to the least specific one, stopping at the first one it can find.
 We currently expose the following variables for use in the message:
+
 - `error_key`: the error we added (ex: `blank` or `invalid_configuration`)
 - `parameter`: the name of the parameter
 
 You can also use this feature to work with machine readable keys:
+
 ```ruby
 result = Users::UpdateUser.call
 if result.failure? &&
@@ -260,7 +287,9 @@ end
 ```
 
 ### Spec Helpers
+
 Enable the helpers and/or matchers:
+
 ```ruby
 RSpec.configure do |config|
   config.include Metaractor::Spec::Helpers
@@ -269,7 +298,9 @@ end
 ```
 
 #### Helpers
+
 - `context_creator`
+
 ```ruby
 # context_creator(error_message: nil, error_messages: [], errors: [], valid: nil, invalid: nil, success: nil, failure: nil, **attributes)
 
@@ -300,7 +331,9 @@ context_creator(
 ```
 
 #### Matchers
+
 - `include_errors`
+
 ```ruby
 result = context_creator(
   errors: {
@@ -320,7 +353,9 @@ expect(result).to include_errors('user.title cannot be blank')
 ```
 
 ### Hash Formatting
+
 Metaractor customizes the output for `Metaractor::Errors#inspect` and `Interactor::Failure`:
+
 ```
 Interactor::Failure:
        Errors:
@@ -334,6 +369,7 @@ Interactor::Failure:
 ```
 
 You can further customize the hash formatting:
+
 ```ruby
 Metaractor.configure do |config|
   # Configure Metaractor to use awesome_print
@@ -342,22 +378,21 @@ end
 ```
 
 ### Further Reading
+
 For more examples of all of the above approaches, please see the specs.
 
 ## Development
 
-- `docker compose build --pull`
-- `docker compose run --rm metaractor` to run specs
-
-or with the Deskfile loaded:
+- `flox pull ryansch/ruby-4-0`
+- `flox activate`
+- `bundle`
 - `rspec spec`
 
 To release a new version:
+
 - Update the version number in `version.rb` and commit the result.
-- `docker compose build --pull`
-- `docker compose run --rm release`
+- Trigger the Release workflow.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/metaractor/metaractor.
-
+Bug reports and pull requests are welcome on GitHub at <https://github.com/metaractor/metaractor>.
