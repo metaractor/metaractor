@@ -25,10 +25,10 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "i18n", "~> 1.14"
   spec.add_runtime_dependency "ostruct", "~> 0.6"
 
-  spec.add_development_dependency "bundler", "~> 2"
+  spec.add_development_dependency "bundler", "~> 4"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.13"
-  spec.add_development_dependency "amazing_print", "~> 1.8"
+  spec.add_development_dependency "amazing_print", "~> 2.0"
   spec.add_development_dependency "debug", "~> 1.10"
   spec.add_development_dependency "activemodel", "~> 8"
 end
