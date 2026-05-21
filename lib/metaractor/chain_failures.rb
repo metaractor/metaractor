@@ -12,5 +12,15 @@ module Metaractor
       context.fail_from_context(context: e.context)
       raise
     end
+
+    def run
+      run!
+    rescue Interactor::Failure
+      # Intentionally rescue all Failures as we're
+      # handling child errors by failing the parents
+      # instead of allowing the child to raise
+      # all of the way up.
+      # Needed since Interactor v3.2.0.
+    end
   end
 end

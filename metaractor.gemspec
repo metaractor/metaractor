@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "interactor", "~> 3.1"
+  spec.add_runtime_dependency "interactor", "~> 3.2"
   spec.add_runtime_dependency "metaractor-sycamore", "~> 0.4", ">= 0.4.3"
   spec.add_runtime_dependency "i18n", "~> 1.14"
   spec.add_runtime_dependency "ostruct", "~> 0.6"
